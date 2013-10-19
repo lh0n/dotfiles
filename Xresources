@@ -61,6 +61,9 @@ URxvt*color15:                 S_base3
 
 !URxvt settings ---------------------------------------------------------------
 
+! This is required in order to solarized colors to display correctly
+URxvt.intensityStyles: false
+
 URxvt.iconFile: /usr/share/icons/Humanity/apps/16/terminal.svg
 
 !urxvt fonts:
