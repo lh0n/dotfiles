@@ -61,10 +61,17 @@ URxvt*color15:                 S_base3
 
 !URxvt settings ---------------------------------------------------------------
 
+URxvt*tripleclickwords: true
+URxvt.iconFile: /usr/share/icons/Humanity/apps/16/terminal.svg
+
+!urxvt scrolling options and cursor style:
+URxvt*saveLines: 65535
+URxvt*scrollstyle:plain
+URxvt*scrollBar: false
+URxvt*cursorBlink: true
+
 ! This is required in order to solarized colors to display correctly
 URxvt.intensityStyles: false
-
-URxvt.iconFile: /usr/share/icons/Humanity/apps/16/terminal.svg
 
 !urxvt fonts:
 URxvt*font: xft:Monospace:pixelsize=12
@@ -77,12 +84,6 @@ URxvt.perl-ext-common:  default,matcher,tabbed
 URxvt.urlLauncher:      /usr/bin/google-chrome
 URxvt.matcher.button:   1
 
-!urxvt scrolling options and cursor style:
-URxvt*saveLines: 12000
-URxvt*scrollstyle:plain
-URxvt*scrollBar: false
-URxvt*cursorBlink: true
-
 ! urxvt tabs settings:
 URxvt.tabbed.tabbar-fg: 2
 URxvt.tabbed.tabbar-bg: 0
@@ -94,11 +95,11 @@ URxvt.tabbed.title: no
 
 ! Xft settings ----------------------------------------------------------------
 
-!Xft.dpi:        96
-!Xft.antialias:  true
-!Xft.rgba:       rgb
-!Xft.hinting:    true
-!Xft.hintstyle:  hintslight
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.rgba:       rgb
+Xft.hinting:    true
+Xft.hintstyle:  hintslight
 
 Xcursor.theme:    Vanilla-DMZ-AA
 
