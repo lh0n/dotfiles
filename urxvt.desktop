@@ -1,15 +1,15 @@
 [Desktop Entry]
-Name=rxvt
+Name=Urxvt
 Comment=Terminal emulator
-TryExec=rxvt
-Exec=rxvt
+TryExec=urxvt
+Exec=urxvt
 Icon=terminal
 Type=Application
-Categories=Utility;TerminalEmulator;System;
+Categories=GNOME;GTK;Utility;TerminalEmulator;System;
 StartupNotify=true
 X-Ayatana-Desktop-Shortcuts=NewWindow;
  
 [NewWindow Shortcut Group]
 Name=Open a New Terminal
-Exec=rxvt
+Exec=urxvt
 TargetEnvironment=Unity
