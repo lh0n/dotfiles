@@ -1,46 +1,76 @@
-export EDITOR=$(which vim)
-export VISUAL=${EDITOR}
-export LANG="en"
-export LANGUAGE=${LANG}
-export LC_ALL="C"
+#export LANG="en"
+#export LANGUAGE=${LANG}
+#export LC_ALL="C"
 export TZ="Europe/Zurich"
-
-HISTFILE=~/.histfile
-HISTSIZE=100000
-SAVEHIST=100000
-
-setopt auto_pushd
-setopt autocd
-setopt clobber
-setopt extended_glob
-setopt hist_ignore_space
-setopt hist_reduce_blanks
-setopt histignorealldups
-setopt hist_save_no_dups
-setopt hist_verify
-setopt inc_appendhistory
-setopt no_beep
-setopt notify
-setopt prompt_subst
-setopt pushd_ignore_dups
-setopt pushd_silent
-setopt share_history
 
 bindkey -e
 bindkey '^R' history-incremental-search-backward
 
+# Make less more friendly for non-text input files, see lesspipe(1)
+[[ -x /usr/bin/lesspipe ]] && eval "$(lesspipe)"
+
+# Setup editor
+export EDITOR=$(which vim)
+export VISUAL=${EDITOR}
+
+# Setup pager
 which less > /dev/null && export PAGER=$(which less)
 which zless > /dev/null && export PAGER=$(which zless)
 
-zstyle ':completion:*' completer _expand _complete _ignored _approximate
+# Setup globbing
+setopt extended_glob # Treat the '#', '~' and '^' characters as part of patterns for filename generation,
+setopt nomatch # If a pattern for filename generation has no matches, print an error.
+setopt bad_pattern # Print error for mal-formed patterns.
+
+# Setup history
+setopt extended_history # Include timestamps
+setopt hist_allow_clobber # Add '|' to output redirections in the history.
+setopt hist_ignore_all_dups # Discard oldest line when a new dup occurs.
+setopt hist_save_no_dups # When writing out the history file, discard dups.
+setopt hist_ignore_space # Do no add to history if first character is a space.
+setopt hist_reduce_blanks # Remove superfluous blanks.
+setopt hist_verify # If line contains history expansion, don't execute.
+setopt inc_append_history # Add lines to history right-away
+setopt share_history # Import from and append commands to the history file.
+HISTFILE=~/.histfile
+HISTSIZE=100000
+SAVEHIST=100000
+
+# Setup pushd popd
+setopt auto_pushd # Make cd push the old directory onto the directory stack.
+setopt pushd_ignore_dups # Don't push multiple copies of the same directory onto the directory stack.
+
+# Setup Input/Output
+setopt clobber # Allows '>' redirection to truncate existing files, and '>>' to create files.
+setopt interactive_comments # Allow interactive comments.
+setopt mail_warning # Warn if new mail arrived.
+setopt print_exit_value # Print non-zero status codes.
+
+# Job control
+setopt monitor # Allow job control.
+setopt long_list_jobs # List jobs in the long format by default.
+setopt check_jobs # Report the status of background and suspended jobs before exiting a shell.
+setopt notify # Report the status of background jobs immediately.
+
+# Setup ZLE (ZSH Line Editor)
+setopt no_beep # No beep on error.
+
+# Setup prompting
+setopt prompt_subst # Allow parameter and arithmetic expansion and also command substitution be performed in prompts.
+
+# Setup completion
+setopt auto_list # Automatically list choices on an ambiguous completion.
+setopt auto_menu # Automatically use menu completion after the second consecutive request for completion.
+setopt no_list_ambiguous # Better disable that if auto_list is set.
+setopt no_menu_complete  # Better disable that if auto_menu os set.
+setopt no_auto_param_slash  # Don't mess with my slashes
+setopt no_auto_remove_slash # Don't mess with my slashes
+zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' max-errors 1
 zstyle :compinstall filename '$HOME/.zshrc'
-
-autoload -U compinit
+autoload -Uz compinit
 compinit
-
-
-# make less more friendly for non-text input files, see lesspipe(1)
-[[ -x /usr/bin/lesspipe ]] && eval "$(lesspipe)"
 
 # set color prompt
 # %D date (strftime)
@@ -85,7 +115,8 @@ shell_includes() {
 
 # Set git-aware prompt.
 # Depends on: https://github.com/olivierverdier/zsh-git-prompt.git
-PROMPT=$'\n%B%F{white}[$?]\n%B%F{yellow}%m %F{blue}%~ %f%b$(git_super_status)%F{cyan}%#%f '
+# PROMPT=$'\n%B%F{white}[$?]\n%B%F{yellow}%m %F{blue}%~ %f%b$(git_super_status)%F{cyan}%#%f '
+PROMPT=$'\n%B%F{white}[$?]\n%B%F{yellow}%m %B%F{blue}%~ %B%F{cyan}%#%f%b '
 
 # This will save the DISPLAY variable to ~/.xserver_display if the terminal
 # isn't screen (i.e. when you log in) and source that file in all other cases
@@ -115,7 +146,6 @@ set_common() {
   # if present, add ~/bin to PATH
   [[ -d ~/bin ]] && export PATH="~/bin:${PATH}"
 }
-
 
 set_common
 shell_includes
