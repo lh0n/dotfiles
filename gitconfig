@@ -3,3 +3,5 @@
 	email = lh0n314@gmail.com
 [push]
 	default = simple
+[credential]
+	helper = cache --timeout 7200
