@@ -2,6 +2,16 @@ set nocompatible    " Welcome to the 21st century
 set shell=/bin/bash " Sane shell for vim.
 set term=screen-256color
 
+if has('gui_running')
+  set guioptions-=T  " no toolbar
+  colorscheme elflord
+  set guifont=DejaVu\ Sans\ Mono\ for\ Powerline\ 14
+else
+  set t_Co=256
+  set term=screen-256color
+  let g:solarized_termcolors=256
+endif
+
 """"""""""""""""""""""""""""
 " Setup Vundle and Plugins "
 """"""""""""""""""""""""""""
