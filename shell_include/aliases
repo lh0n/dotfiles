@@ -1,0 +1,7 @@
+alias ls='ls -F --color=auto'
+alias ll='ls -Flh --color=auto'
+alias la='ls -Falho --color=auto'
+
+# Equivalent to `diff -Nuar --color`
+alias diff='diff --new-file --text --unified --recursive --color'
+
