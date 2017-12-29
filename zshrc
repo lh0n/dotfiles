@@ -55,6 +55,11 @@ setopt notify # Report the status of background jobs immediately.
 # Setup ZLE (ZSH Line Editor)
 setopt no_beep # No beep on error.
 
+# Open current line in $EDITOR, awesome when editing multiline commands (ctrl+x+e) .
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^x^e' edit-command-line
+
 # Setup prompting
 setopt prompt_subst # Allow parameter and arithmetic expansion and also command substitution be performed in prompts.
 
@@ -62,7 +67,7 @@ setopt prompt_subst # Allow parameter and arithmetic expansion and also command 
 setopt auto_list # Automatically list choices on an ambiguous completion.
 setopt auto_menu # Automatically use menu completion after the second consecutive request for completion.
 setopt no_list_ambiguous # Better disable that if auto_list is set.
-setopt no_menu_complete  # Better disable that if auto_menu os set.
+setopt no_menu_complete  # Better disable that if auto_menu is set.
 setopt no_auto_param_slash  # Don't mess with my slashes
 setopt no_auto_remove_slash # Don't mess with my slashes
 zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
@@ -138,15 +143,15 @@ set_common() {
   [[ ! -z ${DISPLAY} ]] && which xset &> /dev/null && xset b off
 
   # enable color support of ls and also add handy aliases
-  if [[ "$TERM" != "dumb" && -f ~/.dir_colors ]]; then
-    eval "$(dircolors -b ~/.dir_colors)"
+  if [[ "$TERM" != "dumb" && -f ~/.dircolors ]]; then
+    eval "$(dircolors -b ~/.dircolors)"
     ls --color=auto > /dev/null 2>&1 && alias ls="ls --color=auto"
   fi
 
   # if present, add ~/bin to PATH
   [[ -d ~/bin ]] && export PATH="~/bin:${PATH}"
 }
-
+set_xdisplay
 set_common
 shell_includes
 #ssh_agent
