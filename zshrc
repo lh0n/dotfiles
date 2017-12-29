@@ -77,15 +77,26 @@ zstyle :compinstall filename '$HOME/.zshrc'
 autoload -Uz compinit
 compinit
 
-# set color prompt
-# %D date (strftime)
-# %? last exit code
-# %F fg color
-# %f fg color reset
-# %n username
-# %s hostname
-#PROMPT=$'\n%D{%a %b %d %T %Z %Y}\n\n[$?] %F{27}%~%f\n%F{green}%n@%m%f %# '
-#PROMPT=$'\n[$?] %F{27}%~%f\n%F{green}%n@%m%f %# '
+# Configures a nice prompt with helpful information.
+# Depends on: https://github.com/olivierverdier/zsh-git-prompt.git
+#
+# This is just a reminder for the metadata available to configure the prompt:
+#
+#   %D date (strftime)
+#   %? last exit code
+#   %F fg color
+#   %f fg color reset
+#   %n username
+#   %s hostname
+set_prompt() {
+  local git_prompt="${HOME}/github/zsh-git-prompt/zshrc.sh"
+  if [[ -e ${git_prompt} ]]; then
+    source "${git_prompt}"
+    PROMPT=$'\n[%D{%a %d-%b, %T}] %B$(git_super_status)%b\n%F{magenta}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
+  else
+    PROMPT=$'\n[%D{%a %d-%b, %T}]\n%F{magenta}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
+  fi
+}
 
 ## ssh_agent function helper
 #run_ssh_agent() {
@@ -118,11 +129,6 @@ shell_includes() {
   fi
 }
 
-# Set git-aware prompt.
-# Depends on: https://github.com/olivierverdier/zsh-git-prompt.git
-# PROMPT=$'\n%B%F{white}[$?]\n%B%F{yellow}%m %F{blue}%~ %f%b$(git_super_status)%F{cyan}%#%f '
-PROMPT=$'\n%B%F{white}[$?]\n%B%F{yellow}%m %B%F{blue}%~ %B%F{cyan}%#%f%b '
-
 # This will save the DISPLAY variable to ~/.xserver_display if the terminal
 # isn't screen (i.e. when you log in) and source that file in all other cases
 # (when you open new screen windows)
@@ -151,6 +157,7 @@ set_common() {
   # if present, add ~/bin to PATH
   [[ -d ~/bin ]] && export PATH="~/bin:${PATH}"
 }
+set_prompt
 set_xdisplay
 set_common
 shell_includes
