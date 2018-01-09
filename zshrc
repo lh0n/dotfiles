@@ -44,7 +44,7 @@ setopt pushd_ignore_dups # Don't push multiple copies of the same directory onto
 setopt clobber # Allows '>' redirection to truncate existing files, and '>>' to create files.
 setopt interactive_comments # Allow interactive comments.
 setopt mail_warning # Warn if new mail arrived.
-setopt print_exit_value # Print non-zero status codes.
+# setopt print_exit_value # Print non-zero status codes.
 
 # Job control
 setopt monitor # Allow job control.
@@ -142,6 +142,15 @@ set_xdisplay() {
   esac
 }
 
+# Setup golang environment if it's installed.
+set_golang() {
+  local go_bin="/usr/local/go/bin"
+
+  if [[ -d ${go_bin} ]]; then
+    export GOPATH="${HOME}/code/go"
+    path+=("${go_bin}" "${GOPATH}/bin")
+  fi
+}
 
 # other common settings
 set_common() {
@@ -149,16 +158,18 @@ set_common() {
   [[ ! -z ${DISPLAY} ]] && which xset &> /dev/null && xset b off
 
   # enable color support of ls and also add handy aliases
-  if [[ "$TERM" != "dumb" && -f ~/.dircolors ]]; then
-    eval "$(dircolors -b ~/.dircolors)"
-    ls --color=auto > /dev/null 2>&1 && alias ls="ls --color=auto"
+  if [[ ${TERM} != "dumb" && -f ${HOME}/.dircolors ]]; then
+    eval "$(dircolors -b ${HOME}/.dircolors)"
+    ls --color=auto &> /dev/null && alias ls="ls --color=auto"
   fi
 
-  # if present, add ~/bin to PATH
-  [[ -d ~/bin ]] && export PATH="~/bin:${PATH}"
+  # if personal bin directory exists, add it to the path.
+  [[ -d ~/bin ]] && path+=('~/bin')
 }
+
 set_prompt
 set_xdisplay
 set_common
 shell_includes
+set_golang
 #ssh_agent
