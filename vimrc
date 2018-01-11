@@ -2,11 +2,6 @@ set nocompatible    " Welcome to the 21st century
 set shell=/bin/bash " Sane shell for vim.
 set termguicolors   " Enable True Color support.
 
-if has('gui_running')
-  set guioptions-=T  " no toolbar
-  set guifont=Roboto\ Mono\ for\ Powerline\ 12
-endif
-
 """"""""""""""""""""""""""""
 " Setup Vundle and Plugins "
 """"""""""""""""""""""""""""
@@ -18,7 +13,8 @@ Plugin 'VundleVim/Vundle.vim'      " Let Vundle manage itself.
 " Setup Vundle Plugins
 Plugin 'tpope/vim-sensible'                " Sensible defaults.
 Plugin 'tpope/vim-fugitive'                " Awesome Git integration.
-Plugin 'bling/vim-airline'                 " Light-wight powerline.
+Plugin 'vim-airline/vim-airline'           " Light-wight powerline.
+Plugin 'vim-airline/vim-airline-themes'    " Themes for vim-airline.
 Plugin 'airblade/vim-gitgutter'            " Git diff in the gutter.
 Plugin 'mbbill/undotree'                   " Super undo.
 Plugin 'crusoexia/vim-monokai'             " Monokai color scheme.
@@ -39,9 +35,20 @@ let g:airline_extensions = ['branch', 'tabline']
 " Load powerine symbols.
 let g:airline_powerline_fonts = 1
 
+" GUI setup
+if has('gui_running')
+  set guioptions-=T  " no toolbar
+  set guifont=Roboto\ Mono\ for\ Powerline\ 12
+endif
+
+" Set syntax highlight and colorscheme.
 syntax enable
 set background=dark
 colorscheme monokai
+
+" Better menus and completion
+set wildmenu
+set wildmode=longest:list,full
 
 set laststatus=2    " Always show status line.
 set noshowmode      " Do not show the default mode indicator.
