@@ -92,9 +92,9 @@ set_prompt() {
   local git_prompt="${HOME}/github/zsh-git-prompt/zshrc.sh"
   if [[ -e ${git_prompt} ]]; then
     source "${git_prompt}"
-    PROMPT=$'\n[%D{%a %d-%b, %T}] %B$(git_super_status)%b\n%F{magenta}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
+    PROMPT=$'\n[%D{%a %d-%b, %T}] %B$(git_super_status)%b\n%F{green}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
   else
-    PROMPT=$'\n[%D{%a %d-%b, %T}]\n%F{magenta}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
+    PROMPT=$'\n[%D{%a %d-%b, %T}]\n%F{green}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
   fi
 }
 
@@ -152,6 +152,15 @@ set_golang() {
   fi
 }
 
+# Setup miniconda environemnt if it's installed
+set_conda() {
+  local conda_path="${HOME}/miniconda3/bin"
+
+  if [[ -d ${conda_path} ]]; then
+    path+=("${conda_path}")
+  fi
+}
+
 # other common settings
 set_common() {
   # disable bell
@@ -172,4 +181,5 @@ set_xdisplay
 set_common
 shell_includes
 set_golang
+set_conda
 #ssh_agent
