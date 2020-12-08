@@ -1,21 +1,9 @@
-#export LANG="en"
-#export LANGUAGE=${LANG}
-#export LC_ALL="C"
-export TZ="Europe/Zurich"
+# Disable ctrl+s|q
+setopt noflowcontrol
 
-bindkey -e
-bindkey '^R' history-incremental-search-backward
-
-# Make less more friendly for non-text input files, see lesspipe(1)
-[[ -x /usr/bin/lesspipe ]] && eval "$(lesspipe)"
-
-# Setup editor
-export EDITOR=$(which vim)
-export VISUAL=${EDITOR}
-
-# Setup pager
-which less > /dev/null && export PAGER=$(which less)
-which zless > /dev/null && export PAGER=$(which zless)
+# Enable vi mode.
+export KEYTIMEOUT=1
+bindkey -v
 
 # Setup globbing
 setopt extended_glob # Treat the '#', '~' and '^' characters as part of patterns for filename generation,
@@ -23,16 +11,14 @@ setopt nomatch # If a pattern for filename generation has no matches, print an e
 setopt bad_pattern # Print error for mal-formed patterns.
 
 # Setup history
-setopt extended_history # Include timestamps
 setopt hist_allow_clobber # Add '|' to output redirections in the history.
 setopt hist_ignore_all_dups # Discard oldest line when a new dup occurs.
 setopt hist_save_no_dups # When writing out the history file, discard dups.
 setopt hist_ignore_space # Do no add to history if first character is a space.
 setopt hist_reduce_blanks # Remove superfluous blanks.
 setopt hist_verify # If line contains history expansion, don't execute.
-setopt inc_append_history # Add lines to history right-away
 setopt share_history # Import from and append commands to the history file.
-HISTFILE=~/.histfile
+HISTFILE=${HOME}/.cache/zsh/history
 HISTSIZE=100000
 SAVEHIST=100000
 
@@ -55,27 +41,36 @@ setopt notify # Report the status of background jobs immediately.
 # Setup ZLE (ZSH Line Editor)
 setopt no_beep # No beep on error.
 
-# Open current line in $EDITOR, awesome when editing multiline commands (ctrl+x+e) .
+# Open current line in $EDITOR
 autoload -U edit-command-line
 zle -N edit-command-line
-bindkey '^x^e' edit-command-line
+bindkey '^X^E' edit-command-line
 
 # Setup prompting
 setopt prompt_subst # Allow parameter and arithmetic expansion and also command substitution be performed in prompts.
 
 # Setup completion
-setopt auto_list # Automatically list choices on an ambiguous completion.
-setopt auto_menu # Automatically use menu completion after the second consecutive request for completion.
-setopt no_list_ambiguous # Better disable that if auto_list is set.
-setopt no_menu_complete  # Better disable that if auto_menu is set.
-setopt no_auto_param_slash  # Don't mess with my slashes
-setopt no_auto_remove_slash # Don't mess with my slashes
-zstyle ':completion:*' completer _expand _complete _ignored _correct _approximate
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' max-errors 1
-zstyle :compinstall filename '$HOME/.zshrc'
 autoload -Uz compinit
+zstyle ':completion:*' menu select
+zmodload zsh/complist
 compinit
+
+# Make less more friendly for non-text input files, see lesspipe(1)
+[[ -x /usr/bin/lesspipe ]] && eval "$(lesspipe)"
+
+# Setup pager
+which less > /dev/null && export PAGER=$(which less)
+which zless > /dev/null && export PAGER=$(which zless)
+
+# Setup dircolors theme
+[[ -r ${HOME}/.dircolors ]] && eval $(dircolors ${HOME}/.dircolors)
+
+# FZF - Fuzzy Finder
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_DEFAULT_OPTS='--extended --height 40% --layout=reverse --border'
+# Follow symbolic links and do not ignore hidden files.
+export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
+export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
 
 # Configures a nice prompt with helpful information.
 # Depends on: https://github.com/olivierverdier/zsh-git-prompt.git
@@ -94,92 +89,65 @@ set_prompt() {
     source "${git_prompt}"
     PROMPT=$'\n[%D{%a %d-%b, %T}] %B$(git_super_status)%b\n%F{green}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
   else
-    PROMPT=$'\n[%D{%a %d-%b, %T}]\n%F{green}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
+    PROMPT=$'\n[%D{%a %d-%b, %T}]\n%F{yellow}%m%f:%F{blue}[%2~]%f\n%F{cyan}%#%f '
   fi
 }
 
-## ssh_agent function helper
-#run_ssh_agent() {
-#  ssh-agent | grep -vi 'agent pid' > ~/.ssh-agent
-#  source ~/.ssh-agent
-#}
-#
-#
-## ensure ssh-agent is running and the user's environment is up to date
-#ssh_agent() {
-#  if [[ -f ~/.ssh-agent ]]; then
-#    source ~/.ssh-agent
-#    if [[ -n ${SSH_AGENT_PID} ]]; then
-#      if ! ps -p ${SSH_AGENT_PID} | grep 'ssh-agent' &>/dev/null; then
-#        run_ssh_agent
-#      fi
-#    fi
-#  else
-#    run_ssh_agent
-#  fi
-#}
+logging() {
+  logger --id=$$ - $(basename "$0") - "$@"
+}
 
-
-# source other scripts if found in your $HOME/.shell_include
+# Source other scripts from $HOME/.shell_include.
+# Hidden/dotfiles files are ignored.
 shell_includes() {
-  if [[ -d ~/.shell_include ]]; then
-     for i in $(ls -a ~/.shell_include | egrep -v '^(\.|\.\.)$'); do
-       source ~/.shell_include/${i}
+  local -r include_dir="${HOME}/.shell_include"
+  if [[ -d ${include_dir} ]]; then
+     for i in $(ls "${include_dir}"); do
+       if source "${include_dir}/${i}"; then
+         logging "[ZSHRC]: Sourced ${i}"
+       else
+         logging "[ZSHRC]: Failed to source: ${i}"
+       fi
      done
   fi
 }
 
-# This will save the DISPLAY variable to ~/.xserver_display if the terminal
-# isn't screen (i.e. when you log in) and source that file in all other cases
-# (when you open new screen windows)
-set_xdisplay() {
-  case "${TERM}" in
-    screen*|tmux*)
-      [[ -f ~/.xserver_display ]] && source ~/.xserver_display
-      ;;
-    *)
-      echo "export DISPLAY=${DISPLAY}" > ~/.xserver_display
-  esac
-}
-
-# Setup golang environment if it's installed.
-set_golang() {
-  local go_bin="/usr/local/go/bin"
-
-  if [[ -d ${go_bin} ]]; then
-    export GOPATH="${HOME}/code/go"
-    path+=("${go_bin}" "${GOPATH}/bin")
+# Add to PATH
+add_to_path() {
+  local -r dirpath="${1:?'Required path is missing.'}"
+  if [[ -d ${dirpath} ]]; then
+    path+=("${dirpath}")
   fi
 }
 
-# Setup miniconda environemnt if it's installed
-set_conda() {
-  local conda_path="${HOME}/miniconda3/bin"
-
-  if [[ -d ${conda_path} ]]; then
-    path+=("${conda_path}")
-  fi
+# Set PATH
+set_path() {
+  add_to_path "${HOME}/bin"
+  add_to_path "${HOME}/.local/bin"
+  add_to_path "${HOME}/miniconda3/bin"
+  add_to_path "/usr/local/go/bin"
 }
 
-# other common settings
-set_common() {
-  # disable bell
-  [[ ! -z ${DISPLAY} ]] && which xset &> /dev/null && xset b off
-
-  # enable color support of ls and also add handy aliases
-  if [[ ${TERM} != "dumb" && -f ${HOME}/.dircolors ]]; then
-    eval "$(dircolors -b ${HOME}/.dircolors)"
-    ls --color=auto &> /dev/null && alias ls="ls --color=auto"
-  fi
-
-  # if personal bin directory exists, add it to the path.
-  [[ -d ~/bin ]] && path+=('~/bin')
-}
-
-set_prompt
-set_xdisplay
-set_common
+set_path
 shell_includes
-set_golang
-set_conda
-#ssh_agent
+#set_prompt
+
+## zsh-vim-mode plugin
+source "${HOME}/github/zsh-vim-mode/zsh-vim-mode.plugin.zsh"
+
+# starship prompt
+#   installed with: install.sh --bin-dir ~/.local/bin --verbose
+[[ -x ${HOME}/.local/bin/starship ]] && eval $(starship init zsh)
+
+# Load auto-suggestions
+source /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+ZSH_AUTOSUGGEST_USE_ASYNC="yes please"
+ZSH_AUTOSUGGEST_STRATEGY=(completion)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#504945"
+
+# Load syntax highlighting - Must be last
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Override bindings set by `zsh-vim-mode.plugin.zsh`
+bindkey '^R' fzf-history-widget
+
