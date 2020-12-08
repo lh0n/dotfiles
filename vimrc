@@ -1,58 +1,114 @@
 set nocompatible    " Welcome to the 21st century
 set shell=/bin/bash " Sane shell for vim.
-set termguicolors   " Enable True Color support.
+filetype plugin indent on  " Required for proper plugin setup
+"set termguicolors   " Enable True Color support.
 
-""""""""""""""""""""""""""""
-" Setup Vundle and Plugins "
-""""""""""""""""""""""""""""
-filetype off                       " Required for proper Vundle setup
-set rtp+=~/.vim/bundle/Vundle.vim  " Runtime path to initialize Vundle.
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'      " Let Vundle manage itself.
+" Vim does not understand the alacritty terminfo yet.
+" Force enable true color support.
+if exists('+termguicolors')
+  let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
-" Setup Vundle Plugins
-Plugin 'tpope/vim-sensible'                " Sensible defaults.
-Plugin 'tpope/vim-fugitive'                " Awesome Git integration.
-Plugin 'vim-airline/vim-airline'           " Light-wight powerline.
-Plugin 'vim-airline/vim-airline-themes'    " Themes for vim-airline.
-Plugin 'airblade/vim-gitgutter'            " Git diff in the gutter.
-Plugin 'mbbill/undotree'                   " Super undo.
-Plugin 'crusoexia/vim-monokai'             " Monokai color scheme.
+""""""""""""""""""""""""""""""
+" Setup vim-plug and Plugins "
+""""""""""""""""""""""""""""""
+call plug#begin('~/.vim/plugged')
+Plug 'airblade/vim-gitgutter'            " Git diff in the gutter.
+Plug 'ConradIrwin/vim-bracketed-paste'   " Auto set paste.
+Plug 'jiangmiao/auto-pairs'              " Auto close brackets.
+Plug 'junegunn/fzf'                      " Fuzzy finder.
+Plug 'mbbill/undotree'                   " Super undo.
+Plug 'mhinz/vim-signify'                 " Diff gutter (mercurial).
+Plug 'morhetz/gruvbox'                   " Gruvbox theme.
+Plug 'scrooloose/nerdtree'               " Directory tree.
+Plug 'sheerun/vim-polyglot'              " Better syntax highlighting.
+Plug 'tpope/vim-fugitive'                " Awesome Git integration.
+Plug 'tpope/vim-sensible'                " Sensible defaults.
+Plug 'tpope/vim-surround'                " Change the surroundings.
+call plug#end()
 
-" End of Vundle Plugins Setup
-call vundle#end()                  " Required for proper Vundle setup
-filetype plugin indent on          " Required for proper Vundle setup
+" Toggle NERDTree.
+map <C-f> :NERDTreeToggle<CR>
 
-" Options for Vim-Airline plugin.
-"
-" Only load the extensions I want.
-let g:airline_extensions = ['branch', 'tabline']
+""""""""""""""""""""""""""
+" End of vim-plug  Setup "
+""""""""""""""""""""""""""
 
-" Setup nice UTF8 symbols.
-" Require powerline fonts to be installed.
-" See: https://powerline.readthedocs.org/en/master/installation/linux.html#fontconfig
-"
-" Load powerine symbols.
-let g:airline_powerline_fonts = 1
+" Automatically change the working path to the path of the current file
+autocmd BufNewFile,BufEnter * silent! lcd %:p:h
+
+" Show line numbers
+set number
+
+" use » to mark Tabs and ° to mark trailing whitespace. This is a
+" non-obtrusive way to mark these special characters.
+set list listchars=tab:»\ ,trail:°
+
+" Highlight the search term when you search for it.
+set hlsearch
+
+" By default, <shift+k> looks up man pages for the word under the cursor,
+" which isn't very useful, so we map it to something else.
+nnoremap <s-k> <CR>
+
+" Set the Leader.
+let mapleader=' '
 
 " GUI setup
 if has('gui_running')
   set guioptions-=T  " no toolbar
-  set guifont=Roboto\ Mono\ for\ Powerline\ 12
+  set guifont=FiraCode\ Nerd\ Font\ Regular\ 14
 endif
+
+" Use the patience diff algorithm
+set diffopt+=internal,algorithm:patience
 
 " Set syntax highlight and colorscheme.
 syntax enable
 set background=dark
-colorscheme monokai
+let g:gruvbox_italic=1
+colorscheme gruvbox
+
+set laststatus=2           " Always show status line.
+set showtabline=2          " Always show the tabline.
+set expandtab              " Force this, although it's in googlestyle.vim
+set shiftwidth=2           " Force this, although it's in googlestyle.vim
+set softtabstop=2          " Make tabs act like spaces
+set tabstop=8              " Force this, although it's in googlestyle.vim
+set textwidth=80           " Force this, although it's in googlestyle.vim
+set noshowmode             " Do not show the default mode indicator.
+set showmatch              " Show matching braces / brackets
+set incsearch              " Do incremental searching
+set title                  " Let vim change my tab/window title
+set autoread
+set cursorline             " highlight the current line
+set cursorcolumn           " highlight the current column
+set colorcolumn=80         " highlight the column 80
+set clipboard=unnamedplus  " Yank to the X window clipboard
 
 " Better menus and completion
 set wildmenu
 set wildmode=longest:list,full
 
-set laststatus=2    " Always show status line.
-set noshowmode      " Do not show the default mode indicator.
-set cursorline      " Highlight active cursor line.
-set colorcolumn=80  " Highlight 80th colunm.
+" Easy tab switching (Ctrl+Tab)
+map <C-i> gt
 
-set tabstop=2 shiftwidth=2 expandtab
+" Shift-<direction> is normally mapped to paging the screen up/down
+" I find this is annoying with how I use visual mode (V).
+noremap <S-Up> <Up>                 " Map shift-up to up
+noremap <S-Down> <Down>             " Map shift-down to down
+inoremap <S-Up> <Up>                " Map shift-up to up in insert mode
+inoremap <S-Down> <Down>            " Map shift-down to down in insert mode
+
+" Sanity keeping commands
+command -bang Q :q
+command -bang W :w
+
+" Options for powerline.
+"
+python3 from powerline.vim import setup as powerline_setup
+python3 powerline_setup()
+python3 del powerline_setup
+
