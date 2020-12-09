@@ -1,16 +1,12 @@
 [user]
-	name = Luis Nardella
-	email = lh0n314@gmail.com
+  name = Luis Nardella
 
-[push]
-	default = simple
-
-[credential]
-	helper = cache --timeout 7200
+[pull]
+  ff = only
 
 [alias]
-	co = checkout
-	br = branch
-	ci = commit
-	st = status
-	last = log -1 HEAD
+  co = checkout
+  br = branch
+  ci = commit
+  st = status
+  last = log -1 HEAD
