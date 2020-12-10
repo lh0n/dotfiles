@@ -73,20 +73,20 @@ colorscheme gruvbox
 
 set laststatus=2           " Always show status line.
 set showtabline=2          " Always show the tabline.
-set expandtab              " Force this, although it's in googlestyle.vim
-set shiftwidth=2           " Force this, although it's in googlestyle.vim
-set softtabstop=2          " Make tabs act like spaces
-set tabstop=8              " Force this, although it's in googlestyle.vim
-set textwidth=80           " Force this, although it's in googlestyle.vim
+set expandtab              " Never insert tabs.
+set shiftwidth=2           " Indent with 2 spaces.
+set softtabstop=2          " Number os spaces to insert as Tab.
+set tabstop=8              " Number of spaces a Tab is expanded to.
+set textwidth=80           " Wrap text at the 80th column.
 set noshowmode             " Do not show the default mode indicator.
-set showmatch              " Show matching braces / brackets
-set incsearch              " Do incremental searching
-set title                  " Let vim change my tab/window title
-set autoread
-set cursorline             " highlight the current line
-set cursorcolumn           " highlight the current column
-set colorcolumn=80         " highlight the column 80
-set clipboard=unnamedplus  " Yank to the X window clipboard
+set showmatch              " Show matching braces / brackets.
+set incsearch              " Do incremental searching.
+set title                  " Let vim change my tab/window title.
+set autoread               " Reads file automatically if modified outside.
+set cursorline             " highlight the current line.
+set cursorcolumn           " highlight the current column.
+set colorcolumn=80         " highlight the column 80.
+set clipboard=unnamedplus  " Yank to the X window clipboard.
 
 " Better menus and completion
 set wildmenu
@@ -107,7 +107,6 @@ command -bang Q :q
 command -bang W :w
 
 " Options for powerline.
-"
 python3 from powerline.vim import setup as powerline_setup
 python3 powerline_setup()
 python3 del powerline_setup
