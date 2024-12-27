@@ -1,6 +1,7 @@
 ! Xcursor
-Xcursor.theme: Vanilla-DMZ
-Xcursor.size: 16
+! Theme is set via LXAppearance GUI
+! Xcursor.theme: Vanilla-DMZ 
+Xcursor.size: 32
 ! Xft
 Xft.antialias: True
 Xft.autohint: False
