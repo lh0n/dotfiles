@@ -3,12 +3,19 @@ set shell=/bin/bash " Sane shell for vim.
 filetype plugin indent on  " Required for proper plugin setup
 "set termguicolors   " Enable True Color support.
 
-" Vim does not understand the alacritty terminfo yet.
+" Vim does not support alacritty's terminfo yet.
 " Force enable true color support.
 if exists('+termguicolors')
   let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
   let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
+endif
+
+" Automatically install vim-plug if missing.
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 """"""""""""""""""""""""""""""
@@ -31,6 +38,9 @@ call plug#end()
 
 " Toggle NERDTree.
 map <C-f> :NERDTreeToggle<CR>
+
+" Setup colorizer.
+let g:Hexokinase_highlighters = [ 'background' ]
 
 """"""""""""""""""""""""""
 " End of vim-plug  Setup "
@@ -106,8 +116,9 @@ inoremap <S-Down> <Down>            " Map shift-down to down in insert mode
 command -bang Q :q
 command -bang W :w
 
-" Options for powerline.
-python3 from powerline.vim import setup as powerline_setup
-python3 powerline_setup()
-python3 del powerline_setup
+" Powerline setup.
+" Requires: pip install --user powerline-status
+" python3 from powerline.vim import setup as powerline_setup
+" python3 powerline_setup()
+" python3 del powerline_setup
 
