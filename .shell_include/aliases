@@ -1,7 +1,11 @@
-alias ls='exa --group-directories-first --sort name'
-alias ll='exa --group-directories-first --sort name --long'
-alias la='exa --group-directories-first --sort name --all --long'
+# Better ls
+alias ls='eza --group-directories-first --sort name'
+alias ll='eza --group-directories-first --sort name --long --smart-group'
+alias la='eza --group-directories-first --sort name --all --long --smart-group'
 
 # Equivalent to `diff -Nuar --color`
 alias diff='diff --new-file --text --unified --recursive --color'
+
+# Git bare home repo
+alias cfg='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
