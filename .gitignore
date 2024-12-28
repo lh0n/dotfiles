@@ -1,0 +1,9 @@
+# Bare repo directory
+.cfg
+
+# Python: byte-compiled
+__pycache__/
+*.py[cod]
+
+# Lazy NeoVim
+lazy-lock.json
