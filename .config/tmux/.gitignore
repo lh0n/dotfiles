@@ -1,1 +1,5 @@
-plugins/
+# Ignore the plugins directory.
+plugins/*
+
+# Except the tpm subdirectory which is a git submodule.
+!plugins/tpm/
