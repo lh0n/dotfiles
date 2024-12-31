@@ -87,8 +87,9 @@ logging() {
 
 # Setup editor
 setup_editor() {
-  local -r vim_path="$(which vim)"
-  local -r nvim_path="$(which nvim)"
+  local -r vim_path="$(command -v vim)"
+  local -r nvim_cmd="$(command -v nvim)"
+  nvim_path=${nvim_cmd#*=}  # captures only the path if this is an alias.
   if [[ -x ${nvim_path} ]]; then
     export EDITOR="${nvim_path}"
   elif [[ -x ${vim_path} ]]; then
