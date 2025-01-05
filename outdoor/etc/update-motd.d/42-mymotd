@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Run user defined motd.
+# This file needs to exist in: "/etc/update-motd.d/"
+if [[ ${USER}=="lhon" ]]; then
+  for file in ${HOME}/.local/etc/update-motd.d/*; do
+    [[ -x ${file} ]] && ${file}
+  done
+fi

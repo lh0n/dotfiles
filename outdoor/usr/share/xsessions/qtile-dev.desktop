@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=Qtile Dev
+Comment=Qtile Session (Dev)
+Exec=/home/lhon/github.com/qtile/bin/qtile start --log-level DEBUG
+Type=Application
+Keywords=wm;tiling

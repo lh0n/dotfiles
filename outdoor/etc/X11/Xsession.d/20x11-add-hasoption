@@ -1,0 +1,31 @@
+# temporary fix for LP# 1922414, 1955135 and 1955136 bugs
+# read OPTIONFILE
+# OPTIONS=$(cat "$OPTIONFILE") || true
+# 
+# has_option() {
+#  if [ "${OPTIONS#*
+# $1}" != "$OPTIONS" ]; then
+#    return 0
+#  else
+#    return 1
+#  fi
+# }
+
+OPTIONS="$(
+  if [ -r "$OPTIONFILE" ]; then
+    cat "$OPTIONFILE"
+  fi
+  if [ -d /etc/X11/Xsession.options.d ]; then
+    run-parts --list --regex '\.conf$' /etc/X11/Xsession.options.d | xargs -d '\n' cat
+  fi
+)"
+
+has_option() {
+  # Ensure that a later no-foo overrides an earlier foo
+  if [ "$(echo "$OPTIONS" | grep -Eo "^(no-)?$1\>" | tail -n 1)" = "$1" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+

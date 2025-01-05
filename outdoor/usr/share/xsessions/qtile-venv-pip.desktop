@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Qtile-PIP(venv)
+Comment=Qtile Session (PIP-VENV)
+#Exec=/home/lhon/bin/qtile-venv-pip
+#Exec=/home/lhon/bin/qtile
+Exec=/home/lhon/venv/qtile/bin/qtile start
+Type=Application
+Keywords=wm;tiling
