@@ -1,0 +1,78 @@
+#!/bin/bash -x
+
+version="v0.10.2"
+download_dir="${HOME}/apps"
+download_files=('nvim.appimage' 'nvim.appimage.sha256sum')
+download_path="${download_dir}/${download_files[0]}"
+chksum_path="${download_dir}/${download_files[1]}"
+final_dir="${HOME}/.local/bin"
+final_filename="n"
+final_path="${final_dir}/${final_filename}"
+
+function clean() {
+  mkdir -p ${download_dir}
+  if ! rm ${download_path} ${chksum_path}; then
+    return 0
+  fi
+}
+
+function checksum() {
+  local argv=('--check' '--ignore-missing' '--status')
+
+  if ! test -f ${chksum_path}; then
+    return 1
+  fi
+
+  pushd ${download_dir}
+  if ! sha256sum ${argv[@]} ${chksum_path}; then
+    popd
+    return 1
+  fi
+  popd
+}
+
+function fetch() {
+  local argv=("--output-dir ${download_dir}" "-L" "-O")
+  local url_base="https://github.com/neovim/neovim/releases/download/${version}"
+  for tf in ${download_files[@]}; do
+    if ! curl ${argv[@]} ${url_base}/${tf}; then
+      return 1
+    fi
+  done
+}
+
+function move() {
+  if ! cp ${download_path} ${final_path}; then
+    return 1
+  fi
+}
+
+function perms() {
+  if ! chmod 0700 ${final_path}; then
+    return 1
+  fi
+}
+
+function main() {
+  if ! clean; then
+    exit 1
+  fi
+
+  if ! fetch; then
+    exit 1
+  fi
+
+  if ! checksum; then
+    exit 1
+  fi
+
+  if ! move; then
+    exit 1
+  fi
+
+  if ! perms; then
+    exit 1
+  fi
+}
+
+main

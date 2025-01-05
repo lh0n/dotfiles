@@ -1,0 +1,45 @@
+#!/bin/bash
+# Update the go compiler from the official repository.
+
+set -o xtrace
+set -o errexit
+
+download_dir="${HOME}/Downloads"
+comp_dir='/usr/local/go'
+target_file='go1.22.1.linux-amd64.tar.gz'
+url="https://go.dev/dl/${target_file}"
+want_sum='aab8e15785c997ae20f9c88422ee35d962c4562212bb0f879d052a35c8307c7f'
+dest_dir='/usr/local'
+
+function checksum() {
+  pushd ${download_dir}
+  got_sum=($(sha256sum --zero "${target_file}"))
+  if [[ ${want_sum} != ${got_sum[0]} ]]; then
+    echo "Checksum mismatch."
+    echo "Want: ${want_sum}"
+    echo "Got: ${got_sum}"
+    popd
+    return 1
+  fi
+  popd
+}
+
+function fetch() {
+  curl --output-dir ${download_dir} -LO ${url}
+}
+
+function extract() {
+  if [[ -d "${dest_dir}/go" ]]; then
+    sudo rm -r "${dest_dir}/go"
+  fi
+  
+  sudo tar -C ${dest_dir} -xzf ~/Downloads/${target_file}
+}
+
+function main() {
+  fetch
+  checksum
+  extract
+}
+
+main
