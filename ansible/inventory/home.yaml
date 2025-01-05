@@ -5,7 +5,7 @@ desktop:
     garkbit:
       ansible_host: garkbit
 
-rpi:
+pinet:
   vars:
     ansible_connection: ssh
   hosts:
