@@ -1,0 +1,24 @@
+- name: Install PIPX Packages Common to ALL Hosts
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install Common PIPX Packages
+      community.general.pipx:
+        name: "{{ item }}"
+        state: latest
+        pip_args: "'--verbose'"
+      loop:
+        - ipython
+
+- name: Controller PIPX Packages
+  hosts: controller
+  gather_facts: false
+  tasks:
+    - name: Install Controller PIPX Packages
+      community.general.pipx:
+        name: "{{ item }}"
+        state: latest
+        pip_args: "'--verbose'"
+      loop:
+        - ansible-lint
+        - black

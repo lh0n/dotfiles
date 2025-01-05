@@ -1,0 +1,65 @@
+- name: Cargo - Install Packages
+  hosts: all
+  gather_facts: true
+  vars:
+    cargo_bin: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
+
+  pre_tasks:
+    - name: Inspect Environment
+      ansible.builtin.debug:
+        msg:
+          - "cargo_bin: {{ cargo_bin }}"
+
+  tasks:
+    - name: Common Packages
+      community.general.cargo:
+        executable: "{{ cargo_bin }}"
+        state: latest
+        locked: true
+        name:
+          - bat # better cat
+          - bkt # subprocess caching utility.
+          - cargo-show # print package metadata.
+          - du-dust # better du
+          - eza # better ls
+          - fd-find # better than find
+          - git-delta # nice diff
+          - ripgrep # better than grep
+          - starship # nice shell prompt
+          - tealdeer # time saver
+    - name: Uninstall Common Packages
+      community.general.cargo:
+        executable: "{{ cargo_bin }}"
+        state: absent
+        name:
+          - exa # better ls
+
+- name: Install Workstation Packages
+  hosts: workstation
+  gather_facts: true
+  vars:
+    cargo_bin: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
+
+  tasks:
+    - name: Workstation Packages
+      community.general.cargo:
+        executable: "{{ cargo_bin }}"
+        state: latest
+        locked: true
+        name:
+          - alacritty
+
+- name: Install Laptop Packages
+  hosts: laptop
+  gather_facts: true
+  vars:
+    cargo_bin: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
+
+  tasks:
+    - name: Laptop Packages
+      community.general.cargo:
+        executable: "{{ cargo_bin }}"
+        state: latest
+        locked: true
+        name:
+          - alacritty

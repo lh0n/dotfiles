@@ -1,0 +1,8 @@
+- name: Reboot Machines
+  hosts: workstation
+  become: true
+  tasks:
+    - name: Reboot hosts with no mercy
+      ansible.builtin.reboot:
+        pre_reboot_delay: 15
+        post_reboot_delay: 30

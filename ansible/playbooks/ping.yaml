@@ -1,0 +1,9 @@
+- name: Are you alive
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Ping
+      ansible.builtin.ping:
+    - name: Print message
+      ansible.builtin.debug:
+        msg: Wazzup

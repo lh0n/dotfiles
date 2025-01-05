@@ -1,0 +1,30 @@
+- name: Qtile
+  hosts: controller
+  tasks:
+    - name: Build Deps
+      ansible.builtin.pip:
+        name: ["wheel", "setuptools"]
+        state: latest
+        virtualenv: "{{ ansible_env.HOME }}/venv/qtile/"
+        virtualenv_command: "/usr/bin/python3 -m venv"
+    - name: Qtile Core Deps
+      ansible.builtin.pip:
+        name:
+          [
+            "cffi",
+            "xcffib",
+            "dbus-next",
+            "pyxdg",
+            "python-xlib",
+            "cairocffi",
+            "pangocairocffi",
+          ]
+        state: latest
+        virtualenv: "{{ ansible_env.HOME }}/venv/qtile/"
+        virtualenv_command: "/usr/bin/python3 -m venv"
+    - name: Install Qtile
+      ansible.builtin.pip:
+        name: ["qtile"]
+        state: latest
+        virtualenv: "{{ ansible_env.HOME }}/venv/qtile/"
+        virtualenv_command: "/usr/bin/python3 -m venv"

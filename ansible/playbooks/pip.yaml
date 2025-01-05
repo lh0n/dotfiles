@@ -1,0 +1,15 @@
+- name: Install User PIP Packages Common to ALL Hosts
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install Common PIP Packages
+      ansible.builtin.pip:
+        name: []
+        extra_args: "--user --upgrade --upgrade-strategy=eager"
+        state: present
+
+    - name: Remove PIP Packages
+      ansible.builtin.pip:
+        name: ['ipython', 'pipx']
+        extra_args: "--break-system-packages"
+        state: absent

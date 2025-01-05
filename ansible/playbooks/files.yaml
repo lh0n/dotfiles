@@ -1,0 +1,19 @@
+- name: Deploy Outdoorsie Files
+  hosts: all
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Add User Defined MOTD
+      ansible.builtin.copy:
+        src: {{ ansible_env.HOME }}/outdoors/etc/update-motd.d/42-mymotd
+        dest: "/etc/update-motd.d/42-mymotd"
+        owner: root
+        group: root
+        mode: "0755"
+    - name: Add Default Keyboard Settings
+      ansible.builtin.copy:
+        src: {{ ansible_env.HOME }}/outdoors/etc/default/keyboard
+        dest: /etc/default/keyboard
+        owner: root
+        group: root
+        mode: "0644"

@@ -1,0 +1,38 @@
+- name: Rust - User-space Install Cargo and Rust Compiler
+  hosts: all
+  gather_facts: true
+
+  vars:
+    home_tmp: "{{ ansible_env.HOME }}/tmp"
+    rustup_init_cmd: "{{ home_tmp }}/rustup-init.sh"
+
+  pre_tasks:
+    - name: Inspect Environment
+      ansible.builtin.debug:
+        msg:
+          - "HOME: {{ ansible_env.HOME }}"
+          - "home_tmp: {{ home_tmp }}"
+          - "rustup_init_cmd: {{ rustup_init_cmd }}"
+
+    - name: Ensure HOME temp dir exists
+      ansible.builtin.file:
+        path: "{{ home_tmp }}"
+        state: directory
+        mode: "0750"
+
+    - name: Rustup - Fetch and Verify
+      ansible.builtin.get_url:
+        url: https://sh.rustup.rs
+        dest: "{{ rustup_init_cmd }}"
+        mode: "0760"
+
+  tasks:
+    - name: Run rustup install script
+      ansible.builtin.shell:
+        cmd: sh {{ rustup_init_cmd }} -y --no-modify-path --verbose
+      register: rustup_result
+      changed_when: not ("toolchain is already up to date" in rustup_result.stderr)
+
+    - name: Rustup Result
+      ansible.builtin.debug:
+        msg: "{{ rustup_result }}"

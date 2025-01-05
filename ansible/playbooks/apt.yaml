@@ -1,0 +1,76 @@
+- name: Install Packages Common to ALL Hosts
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Common APT Packages
+      ansible.builtin.apt:
+        autoclean: true
+        autoremove: true
+        clean: true
+        update_cache: true
+        cache_valid_time: 3600
+        state: present
+        pkg:
+          - autorandr
+          - blueman # blueman-applet - bluetooth
+          - cbatticon
+          - cmake # req by cargo
+          - compton
+          - curl
+          - dunst
+          - feh
+          - fontconfig # req by cargo
+          - fonts-noto-color-emoji
+          - fping
+          - fzf
+          - git
+          - hping3
+          - inotify-tools
+          - libfontconfig1-dev # req by cargo alacritty
+          - libfuse2 # req for mounting AppImage
+          - libssl-dev # req by cargo
+          - libxcb-xfixes0-dev # req by cargo
+          - libxkbcommon-dev # req by cargo
+          - lxappearance
+          - mtr
+          - nemo
+          - neofetch
+          - oping
+          - parcellite
+          - pasystray
+          - pipx
+          - pkg-config # req by cargo
+          - python3-pip
+          - python3-venv
+          - rofi
+          - tmux
+          - vim
+          - xss-lock
+          - zsh
+    - name: Neovim Build Deps
+      ansible.builtin.apt:
+        autoclean: true
+        autoremove: true
+        clean: true
+        update_cache: true
+        cache_valid_time: 3600
+        state: present
+        pkg:
+          - ninja-build
+          - gettext
+          - cmake
+          - unzip
+          - curl
+          - build-essential
+    - name: Uninstall APT Packages
+      ansible.builtin.apt:
+        state: absent
+        purge: true
+        pkg:
+          - fd-find
+          - fonts-powerline
+          - ipython
+          - ipython3
+          - ripgrep
+          - tldr

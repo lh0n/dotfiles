@@ -1,0 +1,22 @@
+- name: Install Packages Common to ALL Hosts
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Common APT Packages
+      ansible.builtin.apt:
+        autoclean: true
+        autoremove: true
+        clean: true
+        update_cache: true
+        cache_valid_time: 3600
+        state: present
+        install_recommends: true
+        pkg:
+          - inxi
+          - npm # Required by Mason to Install LSPs.
+    # - name: Uninstall APT Packages
+    #   ansible.builtin.apt:
+    #     state: absent
+    #     purge: true
+    #     pkg:
