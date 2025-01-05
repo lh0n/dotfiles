@@ -1,0 +1,42 @@
+# vim: ft=cfg
+#
+# See dunst(5) for all configuration options
+
+[global]
+    follow = mouse
+    width = (0, 600)
+    height = 500
+    transparency = 10
+    frame_color = "#fbf1c7"
+    gap_size = 2
+    separator_color = auto
+    idle_threshold = 300
+    font = Hack Nerd Font 12
+    format = "<b>%s %p</b>\n%b"
+    alignment = left
+    icon_theme = "Papirus-Dark, Adwaita"
+    dmenu = /usr/bin/rofi
+    browser = /usr/bin/sensible-browser
+    ignore_dbusclose = true
+    mouse_left_click = do_action, close_current
+    mouse_middle_click = close_all
+    mouse_right_click =  close_current
+
+[urgency_low]
+    background = "#7c6f64"
+    foreground = "#ebdbb2"
+    timeout = 45
+    default_icon = ~/.config/dunst/normal.png
+
+[urgency_normal]
+    background = "#3c3836"
+    foreground = "#ebdbb2"
+    timeout = 0
+    default_icon = ~/.config/dunst/normal.png
+
+[urgency_critical]
+    background = "#cc241d"
+    foreground = "#ebdbb2"
+    frame_color = "#d79921"
+    timeout = 0
+    default_icon = ~/.config/dunst/critical.png

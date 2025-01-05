@@ -1,0 +1,17 @@
+configuration {
+  modi:         "combi,drun,run,window";
+  combi-modi:   "window,drun";
+  font:         "Hack Nerd Font 14";
+  show-icons:   true;
+  icon-theme:   "Papirus";
+  terminal:     "alacritty";
+  kb-row-up:            "Up,Control+p";
+  kb-row-down:          "Down,Control+n";
+  kb-accept-entry:      "Control+y,Control+m,Return,KP_Enter";
+  kb-mode-complete:     "Control+Shift+l";
+  kb-mode-next:         "Shift+Right,Control+l";
+  kb-mode-previous:     "Shift+Left,Control+h";
+  kb-remove-char-back:  "BackSpace";
+  kb-remove-to-eol:     "Control+Shift+e";
+}
+@theme "gruvbox-dark"

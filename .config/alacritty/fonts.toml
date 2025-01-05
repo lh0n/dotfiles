@@ -1,0 +1,25 @@
+# Font Configuration
+#
+# The `terminal-font` is an alias configured via `~/.config/fontconfig/fonts.conf`.
+#
+# Inspired by:
+#   https://blog.sebastian-daschner.com/entries/linux-terminal-font-alacritty-jetbrains-mono-emoji
+[font]
+size = 14.0
+
+[font.bold]
+family = "terminal-font"
+style = "Bold"
+
+[font.bold_italic]
+family = "terminal-font"
+style = "Bold Italic"
+
+[font.italic]
+family = "terminal-font"
+style = "Italic"
+
+[font.normal]
+family = "terminal-font"
+style = "Regular"
+
