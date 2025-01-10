@@ -62,4 +62,4 @@ run pasystray &
 # run xss-lock --transfer-sleep-lock --notifier /usr/libexec/xsecurelock/dimmer -- /path/to/xsecurelock.sh &
 
 # Set wallpaper
-feh --bg-fill --randomize ~/wallpapers &
+feh --bg-fill --randomize ~/wallpaper &

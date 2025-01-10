@@ -3,6 +3,9 @@ export LANGUAGE=${LANG}
 #export LC_ALL="C"
 export TZ="Europe/Zurich"
 
+# Ensure safer umask
+umask 027
+
 # Disable ctrl+s|q
 setopt noflowcontrol
 
