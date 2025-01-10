@@ -1,6 +1,9 @@
 # Stow ignore list
 # source: https://www.gnu.org/software/stow/manual/html_node/Types-And-Syntax-Of-Ignore-Lists.html
 
+# Stow sub-packages
+^/outdoor
+
 # Git
 \.git
 \.gitignore
