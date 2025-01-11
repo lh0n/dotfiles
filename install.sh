@@ -21,8 +21,15 @@ sudo stow --verbose --restow --adopt --target /etc etc
 popd
 echo
 
-echo "[STOW]: outdoor (/usr) Package"
+echo "[STOW]: Outdoor (/usr) Package"
 pushd outdoor
 sudo stow --verbose --restow --adopt --target /usr usr
 popd
 echo
+
+echo "[ACLs]: Ensure permissions are set correctly"
+
+# outdoor: otherwise GDM cannot read custom xsessions.
+chown -R lhon:lhon ./outdoor/
+find ./outdoor/ -type d | xargs chmod 755
+find ./outdoor/ -type f | xargs chmod 644
