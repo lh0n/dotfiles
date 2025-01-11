@@ -1,7 +1,7 @@
 # Stow ignore list
 # source: https://www.gnu.org/software/stow/manual/html_node/Types-And-Syntax-Of-Ignore-Lists.html
 
-# Stow sub-packages
+# Ignore sub-packages
 ^/outdoor
 
 # Git
@@ -10,6 +10,7 @@
 \.gitmodules
 
 # Admin files often found in git repos.
+^/install\.sh
 ^/README.*
 ^/LICENSE.*
 ^/COPYING
