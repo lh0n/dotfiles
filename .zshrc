@@ -109,13 +109,15 @@ setup_editor() {
 # Source other scripts from $HOME/.shell_include.
 # Hidden/dotfiles files are ignored.
 shell_includes() {
-  local -r include_dir="${HOME}/.shell_include"
+  local include_dir="${HOME}/.shell_include"
+  local ls="/bin/ls"
   if [[ -d ${include_dir} ]]; then
-     for i in $(ls "${include_dir}"); do
-       if source "${include_dir}/${i}"; then
-         logging "[ZSHRC]: Sourced ${i}"
+     for i in $(${ls} ${include_dir}); do
+       local include_file="${include_dir}/${i}"
+       if source "${include_file}"; then
+         logging "[ZSHRC]: Sourced: ${include_file}"
        else
-         logging "[ZSHRC]: Failed to source: ${i}"
+         logging "[ZSHRC]: Failed to source: ${include_file}"
        fi
      done
   fi
