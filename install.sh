@@ -29,7 +29,7 @@ echo
 
 echo "[ACLs]: Ensure permissions are set correctly"
 
-# outdoor: otherwise GDM cannot read custom xsessions.
-chown -R lhon:lhon ./outdoor/
+# outdoor: otherwise tools such as GDM cannot read custom configs.
+sudo chown -R lhon:lhon ./outdoor/
 find ./outdoor/ -type d | xargs chmod 755
 find ./outdoor/ -type f | xargs chmod 644
