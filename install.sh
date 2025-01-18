@@ -8,7 +8,7 @@
 #   2) Dependencies. It assumes dependencies are already installed via ansible.
 #      Therefore, it won't validade whether dependencies already exist.
 
-set -o xtrace   # verbose
+#set -o xtrace   # verbose
 set -o errexit  # stop on error
 
 echo "[STOW]: Main Package"
@@ -31,5 +31,5 @@ echo "[ACLs]: Ensure permissions are set correctly"
 
 # outdoor: otherwise tools such as GDM cannot read custom configs.
 sudo chown -R lhon:lhon ./outdoor/
-find ./outdoor/ -type d | xargs chmod 755
-find ./outdoor/ -type f | xargs chmod 644
+find ./outdoor/ -type d | xargs chmod --changes 755
+find ./outdoor/ -type f | xargs chmod --changes 644
