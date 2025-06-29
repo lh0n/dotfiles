@@ -4,6 +4,7 @@ alias ll='eza --group-directories-first --sort name --long --smart-group'
 alias la='eza --group-directories-first --sort name --all --long --smart-group'
 # Custom Neovim Install
 alias nvim="${HOME}/.local/neovim/bin/nvim"
+alias nnvim="${HOME}/.local/neovim-nightly/bin/nvim"
 
 # Equivalent to `diff -Nuar --color`
 alias diff='diff --new-file --text --unified --recursive --color'
