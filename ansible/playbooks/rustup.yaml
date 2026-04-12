@@ -3,14 +3,14 @@
   gather_facts: true
 
   vars:
-    home_tmp: "{{ ansible_env.HOME }}/tmp"
+    home_tmp: "{{ ansible_facts['env']['HOME'] }}/tmp"
     rustup_init_cmd: "{{ home_tmp }}/rustup-init.sh"
 
   pre_tasks:
     - name: Inspect Environment
       ansible.builtin.debug:
         msg:
-          - "HOME: {{ ansible_env.HOME }}"
+          - "HOME: {{ ansible_facts['env']['HOME'] }}"
           - "home_tmp: {{ home_tmp }}"
           - "rustup_init_cmd: {{ rustup_init_cmd }}"
 
