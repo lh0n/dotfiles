@@ -1,21 +1,15 @@
-desktop:
-  vars:
-    ansible_connection: ssh
-  hosts:
-    garkbit:
-      ansible_host: garkbit
-
-pinet:
-  vars:
-    ansible_connection: ssh
-  hosts:
-    rpi:
-      ansible_host: rpi
-      ansible_user: pi
-
-controller:
-  vars:
-    ansible_connection: local
-  hosts:
-    localhost:
-      ansible_host: localhost
+---
+all:
+  children:
+    controller:
+      hosts:
+        localhost:
+          ansible_host: localhost
+    desktop:
+      hosts:
+        garkbit:
+          ansible_host: garkbit
+    pinet:
+      hosts:
+        rpi:
+          ansible_host: rpi
