@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+#
+# Emerges niri and xwayland-satellite (install|update).
+
+# set -o xtrace   # verbose
+set -o errexit  # crash on any non-zero exit status.
+set -o nounset  # crash any variable is not defined.
+
+# niri
+NIRI_REMOTE="https://github.com/niri-wm/niri.git"
+NIRI_LOCAL="${HOME}/github.com/niri-wm/niri"
+
+# xwayland-satellite
+XWS_REMOTE="https://github.com/Supreeeme/xwayland-satellite.git"
+XWS_LOCAL="${HOME}/github.com/Supreeeme/xwayland-satellite"
+
+function install_build_deps () {
+    echo "### installing build deps"
+    sudo apt-get update -qq
+
+    # niri
+    sudo apt-get install -y -qq \
+      gcc \
+      clang \
+      libudev-dev \
+      libgbm-dev \
+      libxkbcommon-dev \
+      libegl1-mesa-dev \
+      libwayland-dev \
+      libinput-dev \
+      libdbus-1-dev \
+      libsystemd-dev \
+      libseat-dev \
+      libpipewire-0.3-dev \
+      libpango1.0-dev \
+      libdisplay-info-dev
+ 
+    # xwayland-satellite
+    sudo apt-get install -y -qq \
+      libx11-xcb-dev \
+      libxcb-cursor-dev \
+      libxcb-util-dev
+}
+
+function cook_repo () {
+    local repo_remote="$1"
+    local repo_local="$2"
+    local repo_name
+    repo_name=$(basename "$repo_local")
+
+    echo "### cooking ${repo_name} repo"
+
+    if [[ ! -d "${repo_local}" ]]; then
+        mkdir -p "${repo_local}"
+        git clone "${repo_remote}" "${repo_local}"
+    fi
+
+    pushd "${repo_local}" > /dev/null || exit 1
+    git pull
+    cargo build --release
+    popd > /dev/null || exit 1
+}
+
+function emerge_niri() {
+    echo "### emerging niri"
+
+    pushd "${NIRI_LOCAL}" > /dev/null || exit 1
+
+    # Copy and set permissions (0755) for executables - skips if identical
+    sudo install --verbose --compare -m 0755 -o root -g root \
+      "target/release/niri" \
+      "resources/niri-session" \
+      /usr/local/bin/
+
+    # Copy and set permissions (0644) for config files - skips if identical
+    sudo install --verbose --compare -m 0644 -o root -g root \
+      "resources/niri.desktop" \
+      /usr/share/wayland-sessions/
+    sudo install --verbose --compare -m 0644 -o root -g root \
+      "resources/niri-portals.conf" \
+      /usr/share/xdg-desktop-portal/
+ 
+    # Copy and set permissions (0644) for user systemd units - skips if identical
+    sudo install --verbose --compare -m 0644 -o root -g root \
+      "resources/niri.service" \
+      "resources/niri-shutdown.target" \
+      /etc/systemd/user/
+
+    popd > /dev/null || exit 1
+}
+
+function emerge_xws() {
+    echo "### emerging xwayland-satellite"
+
+    pushd "${XWS_LOCAL}" > /dev/null || exit 1
+
+    # Copy the compiled binary
+    sudo install --verbose --compare -m 0755 -o root -g root \
+      "target/release/xwayland-satellite" \
+      /usr/local/bin/
+
+    popd > /dev/null || exit 1
+}
+
+function main() {
+  echo "## Installing niri and xwayland-satellite"
+  install_build_deps
+  cook_repo "$NIRI_REMOTE" "$NIRI_LOCAL"
+  cook_repo "$XWS_REMOTE" "$XWS_LOCAL"
+  emerge_niri
+  emerge_xws
+
+  echo "Niri has emerged successfully."
+  echo "Reboot/Logout and chose niri."
+}
+
+main
