@@ -18,13 +18,13 @@ layer-rule {
 
 binds {
     // Noctalia-shell IPC calls
-    Mod+D { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Mod+Shift+D { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "windows"; }
-    Mod+Ctrl+D { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
-    Ctrl+Alt+H { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
-    Mod+Shift+L { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
-    Mod+Ctrl+L { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
-    Mod+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
-    Mod+Shift+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissOldest"; }
-    Mod+Ctrl+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
+    Mod+D       hotkey-overlay-title="[home] Run Launcher (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+Shift+D hotkey-overlay-title="[home] Select Windows (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "windows"; }
+    Mod+Ctrl+D  hotkey-overlay-title="[home] Select Emoji (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
+    Ctrl+Alt+H  hotkey-overlay-title="[home] Clippy (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+    Mod+Shift+Q hotkey-overlay-title="[home] Lock Screen (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    Mod+Ctrl+Q  hotkey-overlay-title="[home] Session Menu (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    Mod+Space   hotkey-overlay-title="[home] Notifications (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
+    Mod+Shift+Space hotkey-overlay-title="[home] Dismiss Oldest Notifications" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissOldest"; }
+    Mod+Ctrl+Space  hotkey-overlay-title="[home] Dismiss ALl Notifications" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
 }
