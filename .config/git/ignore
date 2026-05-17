@@ -7,3 +7,5 @@ __pycache__/
 
 # Lazy NeoVim
 lazy-lock.json
+
+**/.claude/settings.local.json
