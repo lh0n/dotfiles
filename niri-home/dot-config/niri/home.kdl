@@ -1,0 +1,12 @@
+binds {
+    // Noctalia-shell IPC calls
+    Mod+D { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+Shift+D { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "windows"; }
+    Mod+Ctrl+D { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
+    Ctrl+Alt+H { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+    Mod+Shift+L { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    Mod+Ctrl+L { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    Mod+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
+    Mod+Shift+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissOldest"; }
+    Mod+Ctrl+Space { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
+}
