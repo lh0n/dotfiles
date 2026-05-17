@@ -1,3 +1,21 @@
+// Named workspaces
+
+workspace "comms"
+workspace "code"
+workspace "focus"
+workspace "cks"
+workspace "personal"
+workspace "projects"
+workspace "todo"
+workspace "misc"
+workspace "setup"
+workspace "dump"
+
+layer-rule {
+    match namespace="^noctalia.*"
+    place-within-backdrop true
+}
+
 binds {
     // Noctalia-shell IPC calls
     Mod+D { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
