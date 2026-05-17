@@ -87,6 +87,9 @@ layout {
     gaps 10
     center-focused-column "never"
 
+    // Clear Niri's opaque layer so the backdrop shines through permanently
+    background-color "rgba(0, 0, 0, 0.4)"
+
     // You can customize the widths that "switch-preset-column-width" (Mod+R) toggles between.
     preset-column-widths {
         // Proportion sets the width as a fraction of the output width, taking gaps into account.
@@ -250,7 +253,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+T hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
     Mod+Shift+D hotkey-overlay-title="App Launcher: rofi" { spawn "rofi" "-show" "combi" "-p" "Run"; }
     Ctrl+Alt+H hotkey-overlay-title="Clippy" { spawn "sh" "-c" "cliphist list | rofi -dmenu -p 'Clippy' -display-columns 2 | cliphist decode | wl-copy"; }
