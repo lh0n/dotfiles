@@ -12,14 +12,9 @@
         cache_valid_time: 3600
         state: present
         pkg:
-          - autorandr
-          - blueman # blueman-applet - bluetooth
-          - cbatticon
           - cmake # req by cargo
           - compton
           - curl
-          - dunst
-          - feh
           - fontconfig # req by cargo
           - fonts-noto-color-emoji
           - fping
@@ -37,8 +32,6 @@
           - nemo
           - neofetch
           - oping
-          - parcellite
-          - pasystray
           - pipx
           - pkg-config # req by cargo
           - python3-pip
@@ -69,9 +62,16 @@
         state: absent
         purge: true
         pkg:
+          - autorandr
+          - blueman # blueman-applet - bluetooth
+          - cbatticon
+          - dunst
+          - feh
           - fd-find
           - fonts-powerline
           - ipython
           - ipython3
+          - parcellite
+          - pasystray
           - ripgrep
           - tldr
