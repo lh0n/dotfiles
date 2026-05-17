@@ -33,3 +33,9 @@ opacity = 0.95
 x = 4
 y = 4
 
+# Map Shift+Enter to send ESC+Enter so CLI apps (like Vim) can recognize the 
+# Shift modifier.
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"
