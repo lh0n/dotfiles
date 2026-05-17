@@ -539,3 +539,9 @@ binds {
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
 }
+
+// =====================================================================
+// ENVIRONMENT OVERRIDES
+// =====================================================================
+include optional=true "home.kdl"
+include optional=true "work.kdl"
