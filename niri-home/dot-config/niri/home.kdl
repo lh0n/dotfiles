@@ -17,18 +17,26 @@ layer-rule {
 }
 
 binds {
-    // Noctalia-shell IPC calls
+    // #"Noctalia Launcher"
     Mod+D       hotkey-overlay-title="[home] Run Launcher (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
     Mod+Shift+D hotkey-overlay-title="[home] Select Windows (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "windows"; }
     Mod+Ctrl+D  hotkey-overlay-title="[home] Select Emoji (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
-    Ctrl+Alt+H  hotkey-overlay-title="[home] Clippy (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
-    Mod+Shift+Q hotkey-overlay-title="[home] Lock Screen (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
-    Mod+Ctrl+Q  hotkey-overlay-title="[home] Session Menu (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
-    Mod+Space   hotkey-overlay-title="[home] Notifications (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
+    Ctrl+Alt+H  hotkey-overlay-title="[home] Clippy (noctalia)"         { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+
+    // #"Noctalia Overlays"
+    Mod+Shift+Q hotkey-overlay-title="[home] Lock Screen (noctalia)"    { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    Mod+Ctrl+Q  hotkey-overlay-title="[home] Session Menu (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+
+    // #"Noctalia Notifications"
+    Mod+Space       hotkey-overlay-title="[home] Notifications (noctalia)"     { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
     Mod+Shift+Space hotkey-overlay-title="[home] Dismiss Oldest Notifications" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissOldest"; }
-    Mod+Ctrl+Space  hotkey-overlay-title="[home] Dismiss ALl Notifications" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
-    // Apps
-    Ctrl+M hotkey-overlay-title="[home]: GMail" { spawn "google-chrome" "--profile-directory=Default" "--app=https://mail.google.com"; }
+    Mod+Ctrl+Space  hotkey-overlay-title="[home] Dismiss All Notifications"    { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
+
+    // #"Applications"
+    Ctrl+M hotkey-overlay-title="[home] GMail" { spawn "google-chrome" "--profile-directory=Default" "--app=https://mail.google.com"; }
+
+    // #"Help"
+    Mod+Shift+Slash hotkey-overlay-title="[home] Keybind Cheatsheet" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:keybind-cheatsheet" "toggle"; }
 }
 
 window-rule {

@@ -154,7 +154,7 @@ layout {
 // spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 // Starts noctalia shell
-// spawn-at-startup "qs" "-c" "noctalia-shell"
+spawn-at-startup "qs" "-c" "noctalia-shell"
 
 hotkey-overlay {
    skip-at-startup
