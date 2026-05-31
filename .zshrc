@@ -9,25 +9,29 @@ umask 027
 # Disable ctrl+s|q
 setopt noflowcontrol
 
-# Enable vim mode.
-export KEYTIMEOUT=1
-bindkey -v
+# Enable vim mode (managed by plugin zsh-vi-mode)
+# export KEYTIMEOUT=1
+# bindkey -v
 
 # Setup globbing
 setopt extended_glob # Treat the '#', '~' and '^' characters as part of patterns for filename generation,
 setopt nomatch # If a pattern for filename generation has no matches, print an error.
 setopt bad_pattern # Print error for mal-formed patterns.
 
-# Setup history
-setopt extended_history # Include timestamps
-setopt hist_allow_clobber # Add '|' to output redirections in the history.
-setopt hist_ignore_all_dups # Discard oldest line when a new dup occurs.
-setopt hist_save_no_dups # When writing out the history file, discard dups.
-setopt hist_ignore_space # Do no add to history if first character is a space.
-setopt hist_reduce_blanks # Remove superfluous blanks.
-setopt hist_verify # If line contains history expansion, don't execute.
-setopt inc_append_history # Add lines to history right-away
-setopt share_history # Import from and append commands to the history file.
+# History settings
+setopt extended_history       # Include timestamps.
+setopt hist_allow_clobber     # Add '|' to output redirections in the history.
+setopt hist_ignore_space      # Do not add to history if first character is a space.
+setopt hist_reduce_blanks     # Remove superfluous blanks.
+setopt hist_verify            # If line contains history expansion, don't execute.
+setopt inc_append_history     # Add lines to history right-away.
+setopt share_history          # Import from and append commands to the history file.
+
+# History deduplication settings
+setopt hist_ignore_all_dups   # Discard oldest line when a new dup occurs in internal history.
+setopt hist_save_no_dups      # When writing out the history file, discard dups.
+setopt hist_find_no_dups      # Do not display duplicates when searching history.
+setopt hist_expire_dups_first # When history fills up, delete duplicates before unique commands.
 
 # Setup history file
 [[ ! -d ${HOME}/.cache/zsh ]] && mkdir -p ${HOME}/.cache/zsh
@@ -54,10 +58,10 @@ setopt notify # Report the status of background jobs immediately.
 # Setup ZLE (ZSH Line Editor)
 setopt no_beep # No beep on error.
 
-# Open current line in $EDITOR
-autoload -U edit-command-line
-zle -N edit-command-line
-bindkey '^X^E' edit-command-line
+# Open current line in $EDITOR - (vv -> managed by zsh-vim-mode)
+# autoload -U edit-command-line
+# zle -N edit-command-line
+# bindkey '^X^E' edit-command-line
 
 # Setup prompting
 setopt prompt_subst # Allow parameter and arithmetic expansion and also command substitution be performed in prompts.
@@ -70,11 +74,6 @@ zstyle ':completion:*' menu select
 zmodload zsh/complist
 compinit
 bashcompinit
-rpa='/usr/bin/register-python-argcomplete'  # provided by system package: 'python3-argcomplete'.
-# Load pipx completion
-eval "$(${rpa} pipx)"
-# alias completion definitions for cfg
-compdef cfg=git
 
 # Make less more friendly for non-text input files, see lesspipe(1)
 [[ -x /usr/bin/lesspipe ]] && eval "$(lesspipe)"
@@ -85,7 +84,9 @@ which zless > /dev/null && export PAGER=$(which zless)
 
 # Setup logging
 logging() {
-  logger --id=$$ - $(basename "$0") - "$@"
+  local level="${1:-info}"  # man logger - for possible levels.
+  local message="${2:-}"
+  logger ${level} --id=$$ $(basename "$0") "[ZSHRC]:" "${message}"
 }
 
 # Setup editor
@@ -109,15 +110,14 @@ setup_editor() {
 # Source other scripts from $HOME/.shell_include.
 # Hidden/dotfiles files are ignored.
 shell_includes() {
-  local include_dir="${HOME}/.shell_include"
-  local ls="/bin/ls"
+  local -r include_dir="${HOME}/.shell_include"
   if [[ -d ${include_dir} ]]; then
-     for i in $(${ls} ${include_dir}); do
-       local include_file="${include_dir}/${i}"
-       if source "${include_file}"; then
-         logging "[ZSHRC]: Sourced: ${include_file}"
+     # (N-.) is a Zsh glob qualifier that ensures we only source normal, existing files
+     for i in "${include_dir}"/*(N-.); do
+       if source "${i}"; then
+         logging info "Sourced: $(basename "${i}")"
        else
-         logging "[ZSHRC]: Failed to source: ${include_file}"
+         logging error "Failed to source: $(basename "${i}")"
        fi
      done
   fi
