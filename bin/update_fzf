@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -o xtrace
+set -o errexit
+
+fzf_repo="${HOME}/github.com/junegunn/fzf"
+
+if [[ -d ${fzf_repo} ]]; then
+  pushd ${fzf_repo}
+  git pull
+  ./install --xdg --no-update-rc --no-bash --no-fish
+  popd
+else
+  echo "FZF repo not found. Run ansible repos playbook."
+fi

@@ -1,0 +1,9 @@
+#!/bin/bash
+set -o noglob
+
+ignore_file="${HOME}/.fdignore"
+
+for pattern in $(cat ${ignore_file} | grep -v \#); do
+    printf "${pattern}"
+    fd --ignore-file=${ignore_file} \'${pattern}\' | wc -l
+done
