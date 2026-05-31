@@ -7,6 +7,12 @@
 # Run manually: pre-commit run --all-files
 
 repos:
+  # --- Secrets detection (all files, all commits) ---
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+
   # --- General file hygiene (all files) ---
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
