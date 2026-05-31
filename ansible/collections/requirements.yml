@@ -1,0 +1,10 @@
+---
+# Minimal collection requirements for this project.
+# Install with: ansible-galaxy collection install -r collections/requirements.yml
+#
+# Policy: prefer ansible.builtin.* for all new tasks.
+# community.general is kept only for modules with no builtin equivalent
+# that would otherwise require complex shell reimplementation.
+collections:
+  - name: community.general
+    version: ">=10.0.0"

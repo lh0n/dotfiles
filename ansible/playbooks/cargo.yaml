@@ -1,3 +1,4 @@
+---
 - name: Cargo - Install Packages
   hosts: all
   gather_facts: true

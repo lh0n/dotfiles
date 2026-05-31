@@ -7,7 +7,9 @@ rules:
     level: warning # package lists are readable at longer lines
 
   truthy:
-    allowed-values: ["true", "false"]
+    allowed-values:
+      - "true"
+      - "false"
     check-keys: false # ansible uses yes/no in some key contexts
 
   empty-lines:

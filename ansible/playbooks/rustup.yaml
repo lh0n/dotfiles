@@ -1,3 +1,4 @@
+---
 - name: Rust - User-space Install Cargo and Rust Compiler
   hosts: all
   gather_facts: true
@@ -28,7 +29,7 @@
 
   tasks:
     - name: Run rustup install script
-      ansible.builtin.shell:
+      ansible.builtin.command:
         cmd: sh {{ rustup_init_cmd }} -y --no-modify-path --verbose
       register: rustup_result
       changed_when: not ("toolchain is already up to date" in rustup_result.stderr)

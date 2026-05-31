@@ -1,3 +1,4 @@
+---
 - name: Are you alive
   hosts: all
   gather_facts: false

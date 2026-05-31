@@ -1,3 +1,4 @@
+---
 - name: Install User PIP Packages Common to ALL Hosts
   hosts: all
   gather_facts: false
@@ -10,6 +11,8 @@
 
     - name: Remove PIP Packages
       ansible.builtin.pip:
-        name: ['ipython', 'pipx']
+        name:
+          - ipython
+          - pipx
         extra_args: "--break-system-packages"
         state: absent

@@ -1,3 +1,4 @@
+---
 - name: Install Packages Common to ALL Hosts
   hosts: all
   gather_facts: false
