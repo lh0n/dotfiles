@@ -100,7 +100,7 @@ binds {
 //    Mod+Shift+Slash hotkey-overlay-title="[home] Keybind Cheatsheet" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:keybind-cheatsheet" "toggle"; }
 
     // #"Applications"
-    Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "~/.cargo/bin/alacritty"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
 
     // ---------------------------------------------------------
     // Mako Notification Management
