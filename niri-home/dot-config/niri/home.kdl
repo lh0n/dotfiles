@@ -11,32 +11,112 @@ workspace "misc"
 workspace "setup"
 workspace "dump"
 
+// Clipboard Manager - Not needed if using noctalia-shell
+spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
+spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
+
+// Wallpaper
+spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/lnardella/wallpapers/0188.jpg"
+
 layer-rule {
-    match namespace="^noctalia.*"
+    match namespace="^swaybg$"
     place-within-backdrop true
 }
 
+// layer-rule {
+//   match namespace="^noctalia.*"
+//   place-within-backdrop true
+// }
+
+// Ensure the workspace itself is transparent so the backdrop shows through
+layout {
+    background-color "transparent"
+}
+
+// Workaround for out-of-order ssh-agent.sock startup (i.e., agent refused
+// operation)
+// Import Niri's environment variables into systemd
+spawn-at-startup "systemctl" "--user" "import-environment" "DISPLAY" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+
+// Import Niri's environment variables into D-Bus (helps with GTK/GNOME apps like gnome-ssh-askpass)
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "DISPLAY" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+
+// Restart the ssh-agent service so it picks up the newly imported variables
+// spawn-at-startup "systemctl" "--user" "restart" "ssh-agent.service"
+spawn-at-startup "systemctl" "--user" "restart" "ssh-agent.socket"
+
 binds {
-    // #"Noctalia Launcher"
-    Mod+D       hotkey-overlay-title="[home] Run Launcher (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Mod+Shift+D hotkey-overlay-title="[home] Select Windows (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "windows"; }
-    Mod+Ctrl+D  hotkey-overlay-title="[home] Select Emoji (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
-    Ctrl+Alt+H  hotkey-overlay-title="[home] Clippy (noctalia)"         { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+    Mod+1 { focus-workspace "comms"; }
+    Mod+2 { focus-workspace "code"; }
+    Mod+3 { focus-workspace "focus"; }
+    Mod+4 { focus-workspace "cks"; }
+    Mod+5 { focus-workspace "personal"; }
+    Mod+6 { focus-workspace "projects"; }
+    Mod+7 { focus-workspace "todo"; }
+    Mod+8 { focus-workspace "misc"; }
+    Mod+9 { focus-workspace "setup"; }
+    Mod+0 { focus-workspace "dump"; }
 
-    // #"Noctalia Overlays"
-    Mod+Shift+Q hotkey-overlay-title="[home] Lock Screen (noctalia)"    { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
-    Mod+Ctrl+Q  hotkey-overlay-title="[home] Session Menu (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    // Move windows - moves single window.
+    Mod+Shift+1 { move-window-to-workspace "comms"; }
+    Mod+Shift+2 { move-window-to-workspace "code"; }
+    Mod+Shift+3 { move-window-to-workspace "focus"; }
+    Mod+Shift+4 { move-window-to-workspace "cks"; }
+    Mod+Shift+5 { move-window-to-workspace "personal"; }
+    Mod+Shift+6 { move-window-to-workspace "projects"; }
+    Mod+Shift+7 { move-window-to-workspace "todo"; }
+    Mod+Shift+8 { move-window-to-workspace "misc"; }
+    Mod+Shift+9 { move-window-to-workspace "setup"; }
+    Mod+Shift+0 { move-window-to-workspace "dump"; }
 
-    // #"Noctalia Notifications"
-    Mod+Space       hotkey-overlay-title="[home] Notifications (noctalia)"     { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
-    Mod+Shift+Space hotkey-overlay-title="[home] Dismiss Oldest Notifications" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissOldest"; }
-    Mod+Ctrl+Space  hotkey-overlay-title="[home] Dismiss All Notifications"    { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
+    // Move columns - moves all windows within a current column.
+    Mod+Ctrl+1 { move-column-to-workspace "comms"; }
+    Mod+Ctrl+2 { move-column-to-workspace "code"; }
+    Mod+Ctrl+3 { move-column-to-workspace "focus"; }
+    Mod+Ctrl+4 { move-column-to-workspace "cks"; }
+    Mod+Ctrl+5 { move-column-to-workspace "personal"; }
+    Mod+Ctrl+6 { move-column-to-workspace "projects"; }
+    Mod+Ctrl+7 { move-column-to-workspace "todo"; }
+    Mod+Ctrl+8 { move-column-to-workspace "misc"; }
+    Mod+Ctrl+9 { move-column-to-workspace "setup"; }
+    Mod+Ctrl+0 { move-column-to-workspace "dump"; }
+
+//    // #"Noctalia Launcher"
+//    Mod+D       hotkey-overlay-title="[home] Run Launcher (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+//    Mod+Shift+D hotkey-overlay-title="[home] Select Windows (noctalia)" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "windows"; }
+//    Mod+Ctrl+D  hotkey-overlay-title="[home] Select Emoji (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "emoji"; }
+//    Ctrl+Alt+H  hotkey-overlay-title="[home] Clippy (noctalia)"         { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "launcher" "clipboard"; }
+//
+//    // #"Noctalia Overlays"
+//    Mod+Shift+Q hotkey-overlay-title="[home] Lock Screen (noctalia)"    { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+//    Mod+Ctrl+Q  hotkey-overlay-title="[home] Session Menu (noctalia)"   { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+//
+//    // #"Noctalia Notifications"
+//    Mod+Space       hotkey-overlay-title="[home] Notifications (noctalia)"     { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "toggleHistory"; }
+//    Mod+Shift+Space hotkey-overlay-title="[home] Dismiss Oldest Notifications" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissOldest"; }
+//    Mod+Ctrl+Space  hotkey-overlay-title="[home] Dismiss All Notifications"    { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "notifications" "dismissAll"; }
+//
+//    // #"Help"
+//    Mod+Shift+Slash hotkey-overlay-title="[home] Keybind Cheatsheet" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:keybind-cheatsheet" "toggle"; }
 
     // #"Applications"
-    Ctrl+M hotkey-overlay-title="[home] GMail" { spawn "google-chrome" "--profile-directory=Default" "--app=https://mail.google.com"; }
+    Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "~/.cargo/bin/alacritty"; }
 
-    // #"Help"
-    Mod+Shift+Slash hotkey-overlay-title="[home] Keybind Cheatsheet" { spawn "qs" "-c" "noctalia-shell" "ipc" "call" "plugin:keybind-cheatsheet" "toggle"; }
+    // ---------------------------------------------------------
+    // Mako Notification Management
+    // ---------------------------------------------------------
+
+    // Dismiss the most recent (or currently hovered) notification
+    Mod+N { spawn "makoctl" "dismiss"; }
+
+    // Dismiss ALL visible notifications instantly (Panic button / Clear screen)
+    Mod+Shift+N { spawn "makoctl" "dismiss" "-a"; }
+
+    // Restore the last dismissed notification from history
+    Mod+Ctrl+N { spawn "makoctl" "restore"; }
+
+    // Fuzzy search and copy notification to clipboard
+    Mod+Alt+N { spawn "bash" "-c" "~/bin/mako-rofi-search.sh"; }
 }
 
 window-rule {
@@ -44,3 +124,53 @@ window-rule {
   open-on-workspace "comms"
   open-maximized true
 }
+
+window-rule {
+  match app-id=r#"^chrome-mail.google.com__-Default$"#
+  match app-id=r#"^chrome-chat.google.com__-Default$"#
+  match app-id=r#"^chrome-keep.google.com__-Default$"#
+  match app-id=r#"^chrome-meet.google.com__-Default$"#
+  match app-id=r#"^chrome-tasks.google.com__-Default$"#
+  match app-id=r#"^chrome-calendar.google.com__-Default$"#
+  open-on-workspace "comms"
+  open-maximized true
+}
+
+window-rule {
+  match app-id=r#"^chrome-cider-v.corp.google.com__-Default$"#
+  match app-id=r#"^chrome-jetski.corp.google.com__-Default$"#
+  open-maximized true
+}
+
+window-rule {
+    match app-id="google-chrome" title="^focus"
+    match app-id="google-chrome" title="^triager"
+    match app-id="google-chrome" title="^task"
+    open-on-workspace "focus"
+}
+window-rule {
+    match app-id="google-chrome" title="^setup"
+    open-on-workspace "setup"
+}
+
+window-rule {
+    match app-id="google-chrome" title="^cks"
+    match app-id="google-chrome" title="^onduty"
+    open-on-workspace "cks"
+}
+
+window-rule {
+    match app-id="google-chrome-beta" title="^cks"
+    open-on-workspace "cks"
+}
+
+window-rule {
+    match app-id="google-chrome" title="^projects"
+    open-on-workspace "projects"
+}
+
+window-rule {
+    match app-id="google-chrome" title="^misc"
+    open-on-workspace "misc"
+}
+
