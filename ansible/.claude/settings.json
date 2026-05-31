@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ansible --version)",
+      "Bash(ansible-galaxy collection list *)",
+      "Bash(ansible-inventory *)",
+      "Bash(ansible-config list *)",
+      "Bash(ansible-config dump *)",
+      "Bash(ansible-playbook * --syntax-check *)",
+      "Bash(ansible-playbook * --check *)",
+      "Bash(ansible-doc *)",
+      "Bash(pipx list *)",
+      "Bash(uv tool list *)",
+      "Bash(gh api *)",
+      "Bash(git diff *)",
+      "Bash(git status *)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(git branch *)",
+      "Bash(git stash list *)"
+    ]
+  }
+}
