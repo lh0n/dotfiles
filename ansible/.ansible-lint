@@ -1,0 +1,28 @@
+---
+# ansible-lint configuration
+# docs: https://ansible-lint.readthedocs.io/configuring/
+
+profile: production
+
+exclude_paths:
+  - .cache/
+  - .git/
+
+# Rules with acceptable exceptions for a home lab
+skip_list:
+  - yaml[line-length] # long package lists are more readable unwrapped
+  - no-free-form # short shell one-liners in command: are acceptable
+  - package-latest # home lab intentionally tracks latest tool versions
+
+warn_list:
+  - experimental
+  - name[template] # Jinja2 in task names: warn, don't fail
+
+enable_list:
+  - args
+  - empty-string-compare
+  - no-log-password
+  - no-same-owner
+
+use_default_rules: true
+verbosity: 1

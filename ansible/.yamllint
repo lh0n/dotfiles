@@ -1,0 +1,25 @@
+---
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning # package lists are readable at longer lines
+
+  truthy:
+    allowed-values: ["true", "false"]
+    check-keys: false # ansible uses yes/no in some key contexts
+
+  empty-lines:
+    max: 2 # allow spacing between play blocks
+
+  # Required by ansible-lint (enables fix mode)
+  comments-indentation: false
+  comments:
+    min-spaces-from-content: 1 # ansible-lint requires exactly 1 (not default 2)
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1 # allows {{ var }} style
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
