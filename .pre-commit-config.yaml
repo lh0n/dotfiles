@@ -1,0 +1,36 @@
+---
+# Pre-commit hooks for the dotfiles repo.
+# Each section is scoped to its subdirectory so adding hooks
+# for other parts of the repo (zsh, niri, etc.) won't interfere.
+#
+# Install: pre-commit install
+# Run manually: pre-commit run --all-files
+
+repos:
+  # --- General file hygiene (all files) ---
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: check-yaml
+        args: [--unsafe]   # needed for Ansible's !vault and !unsafe tags
+        files: ^ansible/
+
+  # --- Ansible linting (scoped to ansible/) ---
+  - repo: local
+    hooks:
+      - id: yamllint-ansible
+        name: yamllint (ansible)
+        language: system
+        entry: sh -c 'cd ansible && yamllint -c .yamllint .'
+        files: ^ansible/.*\.(yml|yaml)$
+        pass_filenames: false
+
+      - id: ansible-lint
+        name: ansible-lint
+        language: system
+        entry: sh -c 'cd ansible && ansible-lint'
+        files: ^ansible/.*\.(yml|yaml)$
+        pass_filenames: false
