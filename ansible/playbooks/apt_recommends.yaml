@@ -15,9 +15,8 @@
         install_recommends: true
         pkg:
           - inxi
-          - npm # Required by Mason to Install LSPs.
-    # - name: Uninstall APT Packages
-    #   ansible.builtin.apt:
-    #     state: absent
-    #     purge: true
-    #     pkg:
+          - npm # Required by Mason to Install LSPs
+      tags:
+        - packages
+        - system
+        - apt

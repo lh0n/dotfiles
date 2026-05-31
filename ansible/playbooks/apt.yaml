@@ -31,7 +31,7 @@
           - lxappearance
           - mtr
           - nemo
-          - neofetch
+          - fastfetch
           - oping
           - pipx
           - pkg-config # req by cargo
@@ -41,8 +41,14 @@
           - stow
           - tmux
           - vim
+          - waybar
           - xss-lock
           - zsh
+      tags:
+        - packages
+        - system
+        - apt
+
     - name: Neovim Build Deps
       ansible.builtin.apt:
         autoclean: true
@@ -58,6 +64,12 @@
           - unzip
           - curl
           - build-essential
+      tags:
+        - packages
+        - system
+        - apt
+        - neovim
+
     - name: Uninstall APT Packages
       ansible.builtin.apt:
         state: absent
@@ -76,3 +88,7 @@
           - pasystray
           - ripgrep
           - tldr
+      tags:
+        - packages
+        - system
+        - apt

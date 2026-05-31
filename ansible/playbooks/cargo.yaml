@@ -1,15 +1,18 @@
 ---
-- name: Cargo - Install Packages
+- name: Cargo - Install Common Packages
   hosts: all
   gather_facts: true
   vars:
-    cargo_bin: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
+    cargo_bin: "{{ ansible_facts['env']['HOME'] }}/.cargo/bin/cargo"
 
   pre_tasks:
     - name: Inspect Environment
       ansible.builtin.debug:
         msg:
           - "cargo_bin: {{ cargo_bin }}"
+      tags:
+        - rust
+        - cargo
 
   tasks:
     - name: Common Packages
@@ -19,48 +22,49 @@
         locked: true
         name:
           - bat # better cat
-          - bkt # subprocess caching utility.
-          - cargo-show # print package metadata.
+          - bkt # subprocess caching utility
+          - cargo-show # print package metadata
           - du-dust # better du
           - eza # better ls
-          - fd-find # better than find
+          - fd-find # better find
           - git-delta # nice diff
-          - ripgrep # better than grep
-          - starship # nice shell prompt
-          - tealdeer # time saver
-    - name: Uninstall Common Packages
+          - ripgrep # better grep
+          - starship # shell prompt
+          - tealdeer # tldr client
+      tags:
+        - packages
+        - user
+        - rust
+        - cargo
+
+    - name: Uninstall Superseded Packages
       community.general.cargo:
         executable: "{{ cargo_bin }}"
         state: absent
         name:
-          - exa # better ls
+          - exa # replaced by eza
+      tags:
+        - packages
+        - user
+        - rust
+        - cargo
 
-- name: Install Workstation Packages
-  hosts: workstation
+- name: Cargo - Install Desktop Packages
+  hosts: desktop
   gather_facts: true
   vars:
-    cargo_bin: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
+    cargo_bin: "{{ ansible_facts['env']['HOME'] }}/.cargo/bin/cargo"
 
   tasks:
-    - name: Workstation Packages
+    - name: Desktop Packages
       community.general.cargo:
         executable: "{{ cargo_bin }}"
         state: latest
         locked: true
         name:
           - alacritty
-
-- name: Install Laptop Packages
-  hosts: laptop
-  gather_facts: true
-  vars:
-    cargo_bin: "{{ ansible_env.HOME }}/.cargo/bin/cargo"
-
-  tasks:
-    - name: Laptop Packages
-      community.general.cargo:
-        executable: "{{ cargo_bin }}"
-        state: latest
-        locked: true
-        name:
-          - alacritty
+      tags:
+        - packages
+        - user
+        - rust
+        - cargo

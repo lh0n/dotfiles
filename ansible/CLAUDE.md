@@ -143,13 +143,15 @@ These should be addressed incrementally — flag them when touched, fix them in 
 
 | File | Issue | Status |
 |------|-------|--------|
-| `cargo.yaml` | References `workstation`/`laptop` groups that don't exist in inventory | open |
 | `apt.yaml` | `autoclean`, `autoremove`, `clean`, `update_cache`, `cache_valid_time` duplicated across tasks | open |
 | `rustup.yaml` | Fetches and runs shell script from the internet with no checksum verification | open |
-| `pip.yaml` | `--break-system-packages` flag is unsafe; `pip` install list is empty (vestigial) | open |
-| `pipx.yaml` | `pip_args: "'--verbose'"` has extra quotes (likely a bug) | open |
-| All playbooks | No task tags — can't run subsets with `--tags` | open |
 | `roles/docker` | Scaffolded but completely empty | open |
+| `cargo.yaml` | Dead `workstation`/`laptop` groups merged into `desktop` | **fixed** |
+| `pip.yaml` | Empty install task removed; `--break-system-packages` dropped | **fixed** |
+| `pipx.yaml` | Double-quoted `pip_args` removed | **fixed** |
+| All playbooks | No task tags | **fixed** |
+| All playbooks | `ansible_env.*` deprecation — migrated to `ansible_facts['env']` | **fixed** |
+| `ansible.cfg` | `INJECT_FACTS_AS_VARS = False` to opt into future default | **fixed** |
 | `files.yaml` | Unquoted Jinja2 in `src:` values | **fixed** |
 | All playbooks | Missing `---` document start | **fixed** |
 | `rustup.yaml` | Used `ansible.builtin.shell` where `command` suffices | **fixed** |
@@ -211,10 +213,7 @@ These should be addressed incrementally — flag them when touched, fix them in 
 
 ## Next Logical Improvements (prioritized)
 
-1. Remove or replace dead `workstation`/`laptop` group references in `cargo.yaml`, `reboot.yaml`
-2. Fix `pipx.yaml` double-quoted `pip_args`
-3. Clean up `pip.yaml` (empty install list, remove `--break-system-packages`)
-4. Add task tags to all playbooks
-5. Implement `roles/docker`
-6. Add a `site.yml` that imports all playbooks in dependency order
-7. Add checksum verification to `rustup.yaml`
+1. Implement `roles/docker`
+2. Add a `site.yml` that imports all playbooks in dependency order
+3. Add checksum verification to `rustup.yaml`
+4. Deduplicate repeated APT module options in `apt.yaml` (use `module_defaults`)

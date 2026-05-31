@@ -5,6 +5,11 @@
   tasks:
     - name: Ping
       ansible.builtin.ping:
+      tags:
+        - connectivity
+
     - name: Print message
       ansible.builtin.debug:
         msg: Wazzup
+      tags:
+        - connectivity

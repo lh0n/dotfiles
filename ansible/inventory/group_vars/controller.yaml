@@ -1,2 +1,3 @@
 ---
 ansible_connection: local
+ansible_become_exe: /usr/bin/sudo.ws  # sudo-rs breaks ansible become prompt detection

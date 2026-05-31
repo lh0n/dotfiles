@@ -6,15 +6,24 @@
   tasks:
     - name: Add User Defined MOTD
       ansible.builtin.copy:
-        src: "{{ ansible_env.HOME }}/outdoors/etc/update-motd.d/42-mymotd"
+        src: "{{ ansible_facts['env']['HOME'] }}/outdoors/etc/update-motd.d/42-mymotd"
         dest: "/etc/update-motd.d/42-mymotd"
         owner: root
         group: root
         mode: "0755"
+      tags:
+        - files
+        - system
+        - config
+
     - name: Add Default Keyboard Settings
       ansible.builtin.copy:
-        src: "{{ ansible_env.HOME }}/outdoors/etc/default/keyboard"
+        src: "{{ ansible_facts['env']['HOME'] }}/outdoors/etc/default/keyboard"
         dest: /etc/default/keyboard
         owner: root
         group: root
         mode: "0644"
+      tags:
+        - files
+        - system
+        - config

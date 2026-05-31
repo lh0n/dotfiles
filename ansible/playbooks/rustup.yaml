@@ -14,18 +14,27 @@
           - "HOME: {{ ansible_facts['env']['HOME'] }}"
           - "home_tmp: {{ home_tmp }}"
           - "rustup_init_cmd: {{ rustup_init_cmd }}"
+      tags:
+        - rust
+        - rustup
 
     - name: Ensure HOME temp dir exists
       ansible.builtin.file:
         path: "{{ home_tmp }}"
         state: directory
         mode: "0750"
+      tags:
+        - rust
+        - rustup
 
     - name: Rustup - Fetch and Verify
       ansible.builtin.get_url:
         url: https://sh.rustup.rs
         dest: "{{ rustup_init_cmd }}"
         mode: "0760"
+      tags:
+        - rust
+        - rustup
 
   tasks:
     - name: Run rustup install script
@@ -33,7 +42,15 @@
         cmd: sh {{ rustup_init_cmd }} -y --no-modify-path --verbose
       register: rustup_result
       changed_when: not ("toolchain is already up to date" in rustup_result.stderr)
+      tags:
+        - packages
+        - user
+        - rust
+        - rustup
 
     - name: Rustup Result
       ansible.builtin.debug:
         msg: "{{ rustup_result }}"
+      tags:
+        - rust
+        - rustup

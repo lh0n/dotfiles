@@ -8,8 +8,14 @@
           - wheel
           - setuptools
         state: latest
-        virtualenv: "{{ ansible_env.HOME }}/venv/qtile/"
+        virtualenv: "{{ ansible_facts['env']['HOME'] }}/venv/qtile/"
         virtualenv_command: "/usr/bin/python3 -m venv"
+      tags:
+        - packages
+        - user
+        - python
+        - qtile
+
     - name: Qtile Core Deps
       ansible.builtin.pip:
         name:
@@ -21,12 +27,23 @@
           - cairocffi
           - pangocairocffi
         state: latest
-        virtualenv: "{{ ansible_env.HOME }}/venv/qtile/"
+        virtualenv: "{{ ansible_facts['env']['HOME'] }}/venv/qtile/"
         virtualenv_command: "/usr/bin/python3 -m venv"
+      tags:
+        - packages
+        - user
+        - python
+        - qtile
+
     - name: Install Qtile
       ansible.builtin.pip:
         name:
           - qtile
         state: latest
-        virtualenv: "{{ ansible_env.HOME }}/venv/qtile/"
+        virtualenv: "{{ ansible_facts['env']['HOME'] }}/venv/qtile/"
         virtualenv_command: "/usr/bin/python3 -m venv"
+      tags:
+        - packages
+        - user
+        - python
+        - qtile
