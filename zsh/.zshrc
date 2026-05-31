@@ -124,28 +124,46 @@ shell_includes() {
 
 safe_symlink() {
   if [[ $# -ne 2 ]]; then
-    echo "Usage: safe_symlink <arg1> <arg2>"
-    echo "  - arg1: the symlink target."
-    echo "  - arg2: the symlink name."
+    echo "Usage: safe_symlink <target> <link_name>"
+    echo "  - target: The actual file/directory you want to point to."
+    echo "  - link_name: The path where the symlink should be created."
     return 1
   fi
 
-  local target=${1:?"Target for symlink is required."}
-  local link=${2:?"Symlink name is required."}
+  local target="$1"
+  local link="$2"
 
-  if [[ $(realpath -eq ${link}) == ${target} ]]; then
-    logging info "The symlink is correct. Target: ${target}, symlink: ${link}"
-    return
-  else
-    logging info "The symlink is incorrect. Target: ${target}, symlink: ${link}"
-    if [[ -L "${link}" ]]; then
-      rm "${link}"
+  # 1. If it's already a valid symlink pointing to the exact target, do nothing.
+  if [[ -L "$link" && "$(readlink "$link")" == "$target" ]]; then
+    logging info "The symlink is already correct. Target: ${target}, Link: ${link}"
+    return 0
+  fi
+
+  # 2. If something exists at the link path (file, dir, or broken/wrong symlink)
+  if [[ -e "$link" || -L "$link" ]]; then
+
+    # If it's just a symlink pointing to the wrong place, it's safe to delete
+    if [[ -L "$link" ]]; then
+      logging info "Removing old/incorrect symlink: ${link}"
+      rm "$link"
     else
-      mv "${link}" "${link}_zshrc_bkp_$(date +"%Y-%m-%d")"
+      # It's a real file or directory! Time to back it up safely.
+      local timestamp=$(date +"%Y-%m-%d_%H-%M-%S")
+      local backup="${link}_bkp_${timestamp}"
+
+      logging warn "Existing file found at ${link}. Backing up to ${backup}"
+      mv "$link" "$backup"
     fi
   fi
 
-  ln -s "${target}" "${link}"
+  # 3. Create the parent directory if it doesn't exist, then symlink
+  mkdir -p "$(dirname "$link")"
+  if ln -s "$target" "$link"; then
+    logging info "Successfully created symlink: ${link} -> ${target}"
+  else
+    logging error "Failed to create symlink: ${link} -> ${target}"
+    return 1
+  fi
 }
 
 setup_prompt() {
