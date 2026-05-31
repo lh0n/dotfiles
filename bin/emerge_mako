@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+#
+# Emerges mako notification daemon (install|update).
+
+# set -o xtrace   # verbose
+set -o errexit  # crash on any non-zero exit status.
+set -o nounset  # crash any variable is not defined.
+
+MAKO_REMOTE="https://github.com/emersion/mako.git"
+MAKO_LOCAL="${HOME}/github.com/emersion/mako"
+
+function install_build_deps () {
+    echo "### installing build deps"
+    sudo apt-get update -qq
+
+    # Removed the trailing 's' from package names
+    sudo apt-get install -y -qq \
+      meson \
+      ninja-build \
+      pkg-config \
+      libwayland-dev \
+      wayland-protocols \
+      libcairo2-dev \
+      libpango1.0-dev \
+      libsystemd-dev \
+      libgdk-pixbuf-2.0-dev \
+      scdoc
+}
+
+function cook_repo () {
+    local repo_remote="$1"
+    local repo_local="$2"
+    local repo_name
+    repo_name=$(basename "$repo_local")
+
+    echo "### cooking ${repo_name} repo"
+
+    # Check for the .git directory to safely determine if it's cloned
+    if [[ ! -d "${repo_local}/.git" ]]; then
+        mkdir -p "${repo_local}"
+        git clone "${repo_remote}" "${repo_local}"
+    fi
+
+    pushd "${repo_local}" > /dev/null || exit 1
+    git pull
+    popd > /dev/null || exit 1
+}
+
+function emerge_mako() {
+    echo "### emerging mako"
+
+    pushd "${MAKO_LOCAL}" > /dev/null || exit 1
+
+    # Clean out your old build directory if you already made one
+    rm -rf build 
+
+    # Setup the build with the user-local prefix
+    meson setup build --prefix "${HOME}/.local"
+
+    # Compile it
+    ninja -C build
+
+    # Install it to user-local prefix
+    ninja -C build install
+
+    # 1. Patch the hardcoded systemd service from the contrib folder
+    # We replace /usr/bin with your ~/.local/bin paths so systemd launches the right binary
+    sed -e "s|/usr/bin/mako|${HOME}/.local/bin/mako|g" \
+        -e "s|/usr/bin/makoctl|${HOME}/.local/bin/makoctl|g" \
+        "contrib/systemd/mako.service" > "build/mako.service"
+
+    # 2. Install the newly patched systemd service
+    #    Copy and set permissions (0644) for config files
+    #      - skips if identical
+    #      - creates parent dirs if missing
+    install --verbose --compare -m 0644 -D \
+      "build/mako.service" \
+      "${HOME}/.config/systemd/user/mako.service"
+
+    install --verbose --compare -m 0644 -D \
+      "build/fr.emersion.mako.service" \
+      "${HOME}/.local/share/dbus-1/services/fr.emersion.mako.service"
+ 
+    popd > /dev/null || exit 1
+}
+
+function start_mako_service() {
+
+    echo "### Restarting services"
+    systemctl --user daemon-reload
+
+    systemctl --user stop mako.service
+    # Kill running mako, in case it's not yet a systemd service
+    killall mako || true
+
+    # Enable and start the new version
+    systemctl --user add-wants niri.service mako.service
+    systemctl --user enable --now mako.service
+    sleep 2
+    systemctl --user status mako.service
+}
+
+function main() {
+  echo "## Installing Mako"
+  install_build_deps
+  cook_repo "$MAKO_REMOTE" "$MAKO_LOCAL"
+  emerge_mako
+  start_mako_service
+
+  echo "Mako has emerged successfully."
+}
+
+main
