@@ -131,7 +131,7 @@
                     "showSwapUsage": false,
                     "textColor": "primary",
                     "useMonospaceFont": true,
-                    "usePadding": false
+                    "usePadding": true
                 },
                 {
                     "colorizeIcons": false,
