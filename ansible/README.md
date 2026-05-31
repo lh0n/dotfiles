@@ -15,6 +15,38 @@ Running `ansible-playbook` from either path works identically.
 - Keep all hosts consistently configured from a single source of truth
 - Automate the boring parts (package installs, tool bootstrapping, config files)
 - Build toward a fully reproducible environment — new machine, run the playbooks, done
+- Gradually migrate standalone playbooks to roles — the end state is a
+  role-based model where each role encapsulates one concern and can be
+  assigned cleanly to the right hosts
+
+### On the migration to roles
+
+The current flat `playbooks/` structure was the right starting point for
+learning, but it doesn't scale well: playbooks accumulate host-specific
+conditionals, package lists grow unwieldy, and reuse across machine types
+becomes awkward.
+
+The migration path is **incremental** — convert one playbook at a time,
+starting with the ones that are most self-contained or most likely to be
+reused (e.g. `docker`, `rust`, `neovim`).
+
+Before converting playbooks, the more important design decision is **how to
+group machines** in the inventory. Role assignments are only clean when the
+groups reflect actual machine roles. The current groups (`controller`,
+`desktop`, `pinet`) describe hardware topology, not functional roles. A
+better model separates the two:
+
+- **Topology groups** (what the machine is): `controller`, `desktop`, `laptop`, `pi`
+- **Functional groups** (what the machine does): `workstation`, `server`, `dev_machine`
+
+A host can belong to multiple groups. A role is then assigned to a functional
+group, not a topology group — e.g. the `rust_dev` role targets `workstation`,
+not `desktop`. This makes it trivial to add a laptop later: add it to
+`workstation` and it inherits all workstation roles automatically.
+
+**Deciding the group/role model is the prerequisite to any meaningful role
+migration** — getting this wrong early means refactoring both roles and
+inventory later.
 
 ---
 
@@ -203,7 +235,11 @@ Intentionally skipped lint rules (see `.ansible-lint` for rationale):
 
 ### Next Features
 
-1. Implement `roles/docker` with Molecule tests
-2. Add `site.yml` orchestrator importing playbooks in dependency order
-3. Add checksum verification to `rustup.yaml`
-4. Deduplicate APT module options using `module_defaults`
+1. **Design inventory group model** — define topology vs functional groups
+   before any further role work; this is the prerequisite for clean role
+   assignments (see [On the migration to roles](#on-the-migration-to-roles))
+2. Implement `roles/docker` with Molecule tests (first real role)
+3. Begin incremental playbook → role migration, one concern at a time
+4. Add `site.yml` orchestrator importing playbooks/roles in dependency order
+5. Add checksum verification to `rustup.yaml`
+6. Deduplicate APT module options using `module_defaults`
