@@ -1,0 +1,82 @@
+/* Base text and font setup. Make sure you have a Nerd Font installed! */
+* {
+    font-family: "JetBrainsMono Nerd Font", "Font Awesome 6 Free", sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+}
+
+/* The main bar styling: semi-transparent dark gray with rounded corners */
+window#waybar {
+    background-color: rgba(30, 30, 46, 0.7); /* Catppuccin Mocha Base */
+    color: #cdd6f4;
+    border-radius: 12px;
+}
+
+/* --- Workspaces --- */
+#workspaces {
+    background: #313244;
+    border-radius: 10px;
+    margin: 4px 8px;
+    padding: 0 4px;
+}
+
+#workspaces button {
+    color: #a6adc8;
+    padding: 0 8px;
+    margin: 2px;
+    border-radius: 6px;
+    transition: all 0.2s ease-in-out;
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+#workspaces button.active {
+    background: #89b4fa; /* Blue highlight for active workspace */
+    color: #1e1e2e;
+}
+
+/* --- Center Window Title --- */
+#window {
+    color: #b4befe;
+    font-weight: bold;
+}
+
+/* --- Right Modules Styling --- */
+/* Groups the modules into nice distinct 'pills' */
+.modules-right > widget > label,
+.modules-right > widget > box {
+    background-color: #313244;
+    color: #cdd6f4;
+    margin: 4px 4px;
+    padding: 0 12px;
+    border-radius: 10px;
+}
+
+/* Specific colors for warnings/battery */
+#battery.charging { color: #a6e3a1; }
+#battery.warning:not(.charging) { color: #f9e2af; }
+#battery.critical:not(.charging) {
+    background-color: #f38ba8;
+    color: #1e1e2e;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+/* Make the power button pop */
+#custom-power {
+    background-color: #f38ba8;
+    color: #1e1e2e;
+    margin-right: 8px;
+}
+
+@keyframes blink {
+    to { background-color: #ffffff; color: #000000; }
+}

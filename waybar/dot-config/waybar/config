@@ -1,0 +1,131 @@
+// -*- mode: jsonc -*-
+{
+    "layer": "top",
+    "margin-top": 8,
+    "margin-left": 10,
+    "margin-right": 10,
+    "height": 33,
+    "spacing": 4,
+
+    "modules-left": [
+        "niri/workspaces"
+    ],
+    "modules-center": [
+        "niri/window"
+    ],
+    "modules-right": [
+        "tray",
+        "idle_inhibitor",
+        "pulseaudio",
+        "power-profiles-daemon",
+        "temperature",
+        "battery",
+        "clock",
+        "custom/power"
+    ],
+
+    "niri/workspaces": {
+        "format": "{name} {icon}",
+        "format-icons": {
+            "active": "",
+            "default": "",
+            "urgent": ""
+        }
+    },
+
+    "niri/window": {
+        "format": "{title}",
+        "separate-outputs": true
+    },
+
+    "idle_inhibitor": {
+        "format": "{icon}",
+        "format-icons": {
+            "activated": "",
+            "deactivated": ""
+        }
+    },
+    "tray": {
+        "icon-size": 21,
+        "spacing": 10
+    },
+    "clock": {
+        "timezone": "Europe/Zurich",
+        "timezones": [
+            "Europe/Zurich",
+            "Etc/UTC",
+            "America/Los_Angeles"
+        ],
+        "timezone-tooltip-format": "{:%H:%M  %Z  (UTC%z)}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}\n\n{tz_list}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}",
+
+        // --- IMPROVEMENTS --- //
+        "calendar": {
+            "mode": "month",
+            "on-scroll": 1, // Allows you to scroll on the clock to change months
+            "format": {
+                "months":     "<span color='#cba6f7'><b>{}</b></span>",
+                "days":       "<span color='#cdd6f4'>{}</span>",
+                "weekdays":   "<span color='#f38ba8'><b>{}</b></span>",
+                "today":      "<span color='#a6e3a1'><b><u>{}</u></b></span>"
+            }
+        },
+        "actions": {
+            "on-scroll-up": "shift_up",     // Scroll up to go to next month
+            "on-scroll-down": "shift_down"  // Scroll down to go to previous month
+        }
+    },
+    "temperature": {
+        "critical-threshold": 80,
+        "format": "{temperatureC}°C {icon}",
+        "format-icons": ["", "", ""]
+    },
+    "battery": {
+        "states": {
+            "good": 80,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{capacity}% {icon}",
+        "format-full": "{capacity}% {icon}",
+        "format-charging": "{capacity}% ",
+        "format-plugged": "{capacity}% ",
+        "format-alt": "{time} {icon}",
+        "format-icons": ["", "", "", "", ""]
+    },
+    "power-profiles-daemon": {
+      "format": "{icon}",
+      "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+      "tooltip": true,
+      "format-icons": {
+        "default": "",
+        "performance": "",
+        "balanced": "",
+        "power-saver": ""
+      }
+    },
+    "pulseaudio": {
+        "format": "{volume}% {icon} {format_source}",
+        "format-bluetooth": "{volume}% {icon} {format_source}",
+        "format-bluetooth-muted": " {icon} {format_source}",
+        "format-muted": " {format_source}",
+        "format-source": "{volume}% ",
+        "format-source-muted": "",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+    "custom/power": {
+        "format" : "⏻ ",
+        "tooltip": false,
+        "on-click": "wlogout --show-binds --buttons-per-row 3 --margin-top 400 --margin-bottom 400"
+    }
+}
