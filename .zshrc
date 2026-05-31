@@ -89,11 +89,10 @@ logging() {
   logger ${level} --id=$$ $(basename "$0") "[ZSHRC]:" "${message}"
 }
 
-# Setup editor
 setup_editor() {
   local -r vim_path="$(command -v vim)"
-  local -r nvim_cmd="$(command -v nvim)"
-  nvim_path=${nvim_cmd#*=}  # captures only the path if this is an alias.
+  local nvim_path="$(command -v nvim)"
+  nvim_path="${nvim_path#*=}"  # excludes alias prefix including the `=` sign.
   if [[ -x ${nvim_path} ]]; then
     export EDITOR="${nvim_path}"
   elif [[ -x ${vim_path} ]]; then
@@ -123,54 +122,185 @@ shell_includes() {
   fi
 }
 
-ssh_agent() {
-  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/openssh_agent"
-  if ! ssh-add -l &> /dev/null; then
-    logging "ssh-agent not available yet"
-    logging "attempting to start ssh-agent systemd service"
-    systemctl --user start ssh-agent.service
-    # ssh-agent -a ${SSH_AUTH_SOCK} &> /dev/null
+safe_symlink() {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: safe_symlink <arg1> <arg2>"
+    echo "  - arg1: the symlink target."
+    echo "  - arg2: the symlink name."
+    return 1
+  fi
+
+  local target=${1:?"Target for symlink is required."}
+  local link=${2:?"Symlink name is required."}
+
+  if [[ $(realpath -eq ${link}) == ${target} ]]; then
+    logging info "The symlink is correct. Target: ${target}, symlink: ${link}"
+    return
   else
-    logging "Reusing available ssh-agent"
+    logging info "The symlink is incorrect. Target: ${target}, symlink: ${link}"
+    if [[ -L "${link}" ]]; then
+      rm "${link}"
+    else
+      mv "${link}" "${link}_zshrc_bkp_$(date +"%Y-%m-%d")"
+    fi
+  fi
+
+  ln -s "${target}" "${link}"
+}
+
+setup_prompt() {
+  local chassis="$(hostnamectl chassis)"
+  local parent="${XDG_CONFIG_HOME:-$HOME/.config}"
+  local target="${parent}/starship/${chassis}.toml"
+  local link="${parent}/starship.toml"
+
+  case $chassis in
+    "laptop")
+      safe_symlink "${target}" "${link}"
+      logging info "prompt configured for chassis: ${chassis}"
+    ;;
+    "desktop")
+      safe_symlink "${target}" "${link}"
+      logging info "prompt configured for chassis: ${chassis}"
+      ;;
+    "vm")
+      safe_symlink "${target}" "${link}"
+      logging info "prompt configured for chassis: ${chassis}"
+      ;;
+    "*")
+      safe_symlink "${parent}/starship/default.toml" "${link}"
+      logging info "prompt  configured for chassis: default"
+      ;;
+  esac
+
+  #   Launch the starship.
+  #     installed with: cargo install starship [--locked]
+  if [[ $+command[starship] ]]; then
+    eval "$(starship init zsh)"  # This sub-shell must be quoted, otherwise nothing happens.
+    logging info "Starship prompt loaded successfully."
+  else
+    logging error "Starship is not installed or not in the PATH."
   fi
 }
 
-# Add to PATH
-add_to_path() {
-  local -r dirpath="${1:?'Required path is missing.'}"
-  if [[ -d ${dirpath} ]]; then
-    path+=("${dirpath}")
+setup_zoxide() {
+  local zoxide="${HOME}/.cargo/bin/zoxide"
+  if [[ ! -x ${zoxide} ]]; then
+    logging warning "zoxide: CLI is not installed."
+    return
+  fi
+  eval "$(zoxide init --cmd cd zsh)"
+}
+
+dump_motd() {
+  local motd="${HOME}/.cargo/bin/dump-motd"
+  if [[ ! -x ${motd} ]]; then
+    logging warning "dump_motd: CLI is not installed."
+    return
+  fi
+
+  if ! ${motd} 2>/dev/null; then
+    logging error "dump_motd: Non-zero exit status."
   fi
 }
-
-# Set PATH
-set_path() {
-  add_to_path "${HOME}/bin"
-  add_to_path "${HOME}/.cargo/bin"
-  add_to_path "${HOME}/.local/bin"
-  add_to_path "${HOME}/miniconda3/bin"
-  add_to_path "/usr/local/go/bin"
-  add_to_path "${HOME}/go/bin"
-}
-
-set_path 
-export PATH
-setup_editor
-#ssh_agent
-shell_includes
 
 # junegunn/fzf
-#   installed with: ./install --no-bash --no-fish --xdg --all
-[ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
-export FZF_DEFAULT_OPTS='--extended --height 40% --layout=reverse --border'
-# Follow symbolic links and do not ignore hidden files.
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
-export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
+#   TODO: Move installation to ansible or nix.
+#   installed with: ./install --no-updaterc --no-bash --no-fish --no-nushell --xdg --all
+setup_fzf() {
+  local fzf_cfg="${XDG_CONFIG_HOME:-$HOME/.config}/fzf/fzf.zsh"
+  if [ -f "${fzf_cfg}" ]; then
+    source "${fzf_cfg}"
+  fi
 
-# starship prompt
-#   installed with: cargo install starship [--locked]
-[[ $+command[starship] ]] && eval "$(starship init zsh)"  # this sub-shell must be quoted, otherwise, nothing happens.
+  # 1. Tmux Integration (Works perfectly in Wayland terminals like Foot, Alacritty, Kitty)
+  export FZF_TMUX=1
+  export FZF_TMUX_OPTS="-p 80%,60%"
 
-# Override bindings set by `zsh-vim-mode.plugin.zsh`
-# bindkey '^R' fzf-history-widget
+  # 2. Global Polish
+  export FZF_DEFAULT_OPTS="
+    --extended
+    --height=50%
+    --layout=reverse
+    --border=rounded
+    --info=inline-right
+    --bind='ctrl-/:toggle-preview'
+  "
+
+  # 3. File Search
+  export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git"
+  export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
+  export FZF_CTRL_T_OPTS="
+    --preview 'bat -n --color=always {}'
+    --preview-window right:60%:hidden
+  "
+
+  # 4. History Search
+  export FZF_CTRL_R_OPTS="
+    --border-label=' Command History '
+    --border-label-pos=2
+    --tiebreak=index
+    --exact
+    --preview='echo {}'
+    --preview-window=down:3:hidden:wrap
+    --bind='ctrl-y:execute-silent(echo -n {2..} | wl-copy)+abort'
+  "
+}
+# Load FZF before zsh-vi-mode initializes.
+setup_fzf
+
+# zsh-vi-mode:
+#   - Default config entry-point, called automatically.
+#   - Installed with antidote.
+#   - Must be defined before loading antidote.
+#   - Must come after setup_fzf.
+zvm_config() {
+  ZVM_KEYTIMEOUT=20
+  ZVM_LINE_INIT_MODE=$ZVM_MODE_LAST
+  ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+  ZVM_VI_SURROUND_BINDKEY="s-prefix"  # sa, sd, sr
+
+  # --- Visual Mode Highlight ---
+  ZVM_VI_HIGHLIGHT_BACKGROUND="#665c54" # Gruvbox bg3
+  ZVM_VI_HIGHLIGHT_FOREGROUND="white"
+  ZVM_VI_HIGHLIGHT_EXTRASTYLE="bold,underline"
+
+  # --- Cursor Colors ---
+  # 1. Retrieve the default cursor styles (shapes) from the plugin
+  local ncur=$(zvm_cursor_style $ZVM_NORMAL_MODE_CURSOR)
+  local icur=$(zvm_cursor_style $ZVM_INSERT_MODE_CURSOR)
+  local vcur=$(zvm_cursor_style $ZVM_VISUAL_MODE_CURSOR)
+
+  # 2. Append Gruvbox hex colors to the styles using terminal escape sequences
+  ZVM_NORMAL_MODE_CURSOR=$ncur'\e\e]12;#fe8019\a'
+  # ZVM_INSERT_MODE_CURSOR=$icur'\e\e]12;#d65d0e\a'
+  ZVM_INSERT_MODE_CURSOR=$icur'\e\e]12;#fb4934\a'
+}
+
+# zsh-vi-mode: Useful for overriding settings like key bindings.
+function zvm_after_init() {
+  # Return some keybindins to FZF.
+  zvm_bindkey viins '^R' fzf-history-widget
+  zvm_bindkey vicmd '^R' fzf-history-widget
+  zvm_bindkey viins '^T' fzf-file-widget
+  zvm_bindkey vicmd '^T' fzf-file-widget
+  zvm_bindkey viins '\ec' fzf-cd-widget
+  zvm_bindkey vicmd '\ec' fzf-cd-widget
+}
+
+# Antidote setup.
+# Reminders:
+#   - Do not do this inside a function to avoid scoping traps.
+#   - Must load antidote after zvm_config() is defined.
+antidote_cfg="${HOME}/.antidote/antidote.zsh"
+if [[ -f "${antidote_cfg}" ]]; then
+  source "${antidote_cfg}"
+  antidote load
+fi
+
+setup_editor
+shell_includes
+setup_prompt
+setup_zoxide
+dump_motd
 
