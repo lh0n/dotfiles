@@ -1,0 +1,2 @@
+# order matters!
+jeffreytse/zsh-vi-mode
