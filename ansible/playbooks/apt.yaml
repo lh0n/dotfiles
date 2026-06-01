@@ -14,14 +14,13 @@
         state: present
         pkg:
           - cmake # req by cargo
-          - compton
           - curl
           - fontconfig # req by cargo
           - fonts-noto-color-emoji
           - fping
-          - fzf
           - git
           - hping3
+          - hyprlock
           - inotify-tools
           - libfontconfig1-dev # req by cargo alacritty
           - libfuse2 # req for mounting AppImage
@@ -39,10 +38,11 @@
           - python3-venv
           - rofi
           - stow
+          - swaybg
           - tmux
           - vim
           - waybar
-          - xss-lock
+          - wl-clipboard
           - zsh
       tags:
         - packages
@@ -78,16 +78,21 @@
           - autorandr
           - blueman # blueman-applet - bluetooth
           - cbatticon
+          - compton
           - dunst
           - feh
           - fd-find
           - fonts-powerline
+          - fzf
           - ipython
           - ipython3
           - parcellite
           - pasystray
           - ripgrep
           - tldr
+          - xsel
+          - xclip
+          - xss-lock
       tags:
         - packages
         - system
