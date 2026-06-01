@@ -145,6 +145,19 @@ layout {
     }
 }
 
+// Disable the top-left hot corner that triggers the Overview.
+// Mod+O is bound for the Overview, so the corner is redundant.
+gestures {
+    hot-corners {
+        off
+    }
+}
+
+// Theme the Overview backdrop to match the wallpaper-through-backdrop look.
+overview {
+    backdrop-color "#1d1d1d"
+}
+
 // Add lines like this to spawn processes at startup.
 // Note that running niri as a session supports xdg-desktop-autostart,
 // which may be more convenient to use.
@@ -154,7 +167,7 @@ layout {
 // spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 // Starts noctalia shell
-spawn-at-startup "qs" "-c" "noctalia-shell"
+// spawn-at-startup "qs" "-c" "noctalia-shell"
 
 hotkey-overlay {
    skip-at-startup

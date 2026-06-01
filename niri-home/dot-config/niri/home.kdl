@@ -16,10 +16,12 @@ spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 // Wallpaper
-spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/lhon/wallpapers/0305.jpg"
+spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/lhon/wallpaper/0305.jpg"
 
 layer-rule {
-    match namespace="^swaybg$"
+    // swaybg registers its layer-shell surface under namespace "wallpaper"
+    // (verify with `niri msg layers`), not "swaybg".
+    match namespace="^wallpaper$"
     place-within-backdrop true
 }
 
@@ -117,12 +119,6 @@ binds {
 
     // Fuzzy search and copy notification to clipboard
     Mod+Alt+N { spawn "bash" "-c" "~/bin/mako-rofi-search.sh"; }
-}
-
-window-rule {
-  match app-id=r#"^chrome-mail.google.com__-Default$"#
-  open-on-workspace "comms"
-  open-maximized true
 }
 
 window-rule {
