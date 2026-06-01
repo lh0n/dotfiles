@@ -16,7 +16,7 @@ spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 // Wallpaper
-spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/lnardella/wallpapers/0188.jpg"
+spawn-at-startup "swaybg" "-m" "fill" "-i" "/home/lhon/wallpapers/0305.jpg"
 
 layer-rule {
     match namespace="^swaybg$"
@@ -173,4 +173,3 @@ window-rule {
     match app-id="google-chrome" title="^misc"
     open-on-workspace "misc"
 }
-
