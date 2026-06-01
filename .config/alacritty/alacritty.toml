@@ -27,13 +27,13 @@ draw_bold_text_with_bright_colors = true
 [window]
 decorations = "None"
 dynamic_padding = true
-opacity = 0.95
+opacity = 1.0
 
 [window.padding]
 x = 4
 y = 4
 
-# Map Shift+Enter to send ESC+Enter so CLI apps (like Vim) can recognize the 
+# Map Shift+Enter to send ESC+Enter so CLI apps (like Vim) can recognize the
 # Shift modifier.
 [[keyboard.bindings]]
 key = "Return"
