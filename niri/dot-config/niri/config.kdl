@@ -245,9 +245,14 @@ window-rule {
 
 // Slight translucency for the active alacritty window.
 window-rule {
-    match app-id=r#"^Alacritty$"# is-active=true
-    opacity 0.95
+    // match app-id=r#"^Alacritty$"# is-active=true
+    match is-active=true
+    opacity 0.75
     draw-border-with-background false
+    // Smooth background blur behind the translucent window
+    background-effect {
+        blur true
+    }
 }
 
 window-rule {
