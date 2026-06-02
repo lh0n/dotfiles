@@ -25,6 +25,11 @@ require('lazy').setup({
   change_detection = {
     notify = false,
   },
+  -- No plugin here needs luarocks; disable it to silence the hererocks
+  -- checkhealth error (see `:checkhealth lazy`).
+  rocks = {
+    enabled = false,
+  },
 })
 
 vim.cmd.colorscheme('catppuccin-mocha')
