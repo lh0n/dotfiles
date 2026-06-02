@@ -32,14 +32,19 @@ return {
         "ts_ls",
         "html",
         "cssls",
+        "emmet_ls",
         "lua_ls",
         "pyright",
       },
-      automatic_installation = false, -- whether to auto-install lspconfig servers
+      -- mason-lspconfig 2.0 can auto-call `vim.lsp.enable` for installed
+      -- servers. We enable explicitly in lspconfig.lua (after applying our
+      -- `vim.lsp.config` overrides), so keep this off to avoid double setup.
+      automatic_enable = false,
     })
 
     mason_tool_installer.setup({
       ensure_installed = {
+        "tree-sitter-cli", -- REQUIRED by nvim-treesitter `main` to compile parsers
         "gofumpt", -- golang formatter stricter than gofmt
         "goimports-reviser", -- golang imports sorting
         "golines", -- golang fixes long lines

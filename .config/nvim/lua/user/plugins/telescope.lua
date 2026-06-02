@@ -4,7 +4,8 @@ return {
   branch = '0.1.x',
   dependencies = {
     'nvim-lua/plenary.nvim',
-    'BurntSushi/ripgrep',
+    -- NOTE: ripgrep (`rg`) is a SYSTEM binary, not a Neovim plugin. Install it
+    -- via your OS package manager (or mason) so live_grep/grep_string work.
     'nvim-telescope/telescope-ui-select.nvim',
     -- Pretty icons. Require a Nerd Font.
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
