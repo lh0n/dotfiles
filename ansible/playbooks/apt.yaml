@@ -13,6 +13,7 @@
         cache_valid_time: 3600
         state: present
         pkg:
+          - cliphist
           - cmake # req by cargo
           - curl
           - fontconfig # req by cargo
