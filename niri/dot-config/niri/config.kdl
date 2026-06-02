@@ -162,10 +162,6 @@ overview {
 // Note that running niri as a session supports xdg-desktop-autostart,
 // which may be more convenient to use.
 
-// Clipboard Manager
-// spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
-// spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
-
 // Starts noctalia shell
 // spawn-at-startup "qs" "-c" "noctalia-shell"
 
