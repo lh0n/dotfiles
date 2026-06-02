@@ -60,7 +60,7 @@ return {
           percentage = 0.15,
         },
         integrations = {
-          cmp = true,
+          blink_cmp = true,
           dap = true,
           dap_ui = true,
           fidget = true,
@@ -73,8 +73,6 @@ return {
             enabled = true,
             indentscope_color = '',
           },
-          noice = true,
-          notify = true,
           nvimtree = true,
           snacks = true,
           telescope = {
