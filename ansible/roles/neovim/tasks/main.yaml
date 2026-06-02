@@ -1,0 +1,37 @@
+---
+- name: Ensure source parent directory exists
+  ansible.builtin.file:
+    path: "{{ neovim_src_dir | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Clone or update Neovim repository
+  ansible.builtin.git:
+    repo: "{{ neovim_repo_url }}"
+    dest: "{{ neovim_src_dir }}"
+    version: "{{ neovim_version }}"
+    force: true
+    update: true
+
+# We want to always build and install, as requested.
+# 'make clean' ensures we don't have stale build artifacts.
+- name: Clean previous build
+  ansible.builtin.command:
+    cmd: make distclean
+    chdir: "{{ neovim_src_dir }}"
+  # This role intentionally rebuilds from source every run, so each command
+  # task always performs work; report it honestly as changed.
+  changed_when: true
+  # ignore_errors: yes # In case make clean fails for some reason on first run, but it shouldn't.
+
+- name: Build Neovim
+  ansible.builtin.command:
+    cmd: "make CMAKE_BUILD_TYPE=RelWithDebInfo CMAKE_INSTALL_PREFIX={{ neovim_install_prefix }}"
+    chdir: "{{ neovim_src_dir }}"
+  changed_when: true
+
+- name: Install Neovim
+  ansible.builtin.command:
+    cmd: make install
+    chdir: "{{ neovim_src_dir }}"
+  changed_when: true

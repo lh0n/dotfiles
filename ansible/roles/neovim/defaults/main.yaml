@@ -1,0 +1,5 @@
+---
+neovim_repo_url: "https://github.com/neovim/neovim.git"
+neovim_version: "stable"
+neovim_src_dir: "{{ ansible_facts['env']['HOME'] }}/github.com/neovim"
+neovim_install_prefix: "{{ ansible_facts['env']['HOME'] }}/.local/neovim"

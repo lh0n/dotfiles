@@ -1,0 +1,6 @@
+---
+- name: Deploy Neovim to all hosts
+  hosts: all
+  gather_facts: true
+  roles:
+    - neovim
