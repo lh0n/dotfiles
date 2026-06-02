@@ -1,187 +1,141 @@
+-- LSP, migrated to the native Neovim 0.11+ API:
+--   * `vim.lsp.config(name, opts)` for per-server overrides
+--   * `vim.lsp.enable({...})` to activate servers
+-- The base cmd/filetypes/root for each server still come from nvim-lspconfig's
+-- shipped `lsp/<name>.lua` files; we only override what we customize.
+--
+-- Lua/nvim-API awareness is provided by lazydev.nvim (see lazydev.lua), which
+-- replaces the archived neodev.nvim.
 return {
   'neovim/nvim-lspconfig',
-  dependencies = {
-    'hrsh7th/cmp-nvim-lsp',
-    { 'folke/neodev.nvim', opts = {} },
-  },
+  event = { 'BufReadPre', 'BufNewFile' },
   config = function()
-    local lspconfig = require('lspconfig')
-    local util = require('lspconfig/util')
-    local cmp_nvim_lsp = require('cmp_nvim_lsp')
-    local tsb = require('telescope.builtin')
+    -- [[ Diagnostics ]] (replaces the deprecated `vim.fn.sign_define` loop).
+    vim.diagnostic.config({
+      severity_sort = true,
+      float = { border = 'rounded', source = true },
+      underline = { severity = vim.diagnostic.severity.ERROR },
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = ' ',
+          [vim.diagnostic.severity.WARN] = ' ',
+          [vim.diagnostic.severity.HINT] = '󰠠 ',
+          [vim.diagnostic.severity.INFO] = ' ',
+        },
+      },
+      virtual_text = { source = 'if_many', spacing = 2 },
+    })
 
-    local opts = { noremap = true, silent = true }
-
+    -- [[ Buffer-local keymaps on attach ]]
+    -- Neovim 0.11 ships defaults we no longer remap: K (hover), <C-s> (insert
+    -- signature help), grn (rename), gra (code action), grr (references),
+    -- gri (implementation), grt (type definition), gO (document symbols),
+    -- and ]d / [d (diagnostic jumps). We keep Telescope-backed navigation and
+    -- a few leader maps below.
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('user-lsp-attach', { clear = true }),
       callback = function(event)
-        local map = function(keys, func, options)
-          vim.keymap.set('n', keys, func, options)
+        local tsb = require('telescope.builtin')
+        local map = function(keys, fn, desc)
+          vim.keymap.set('n', keys, fn, { buffer = event.buf, desc = 'LSP: ' .. desc })
         end
 
-        -- Buffer local mappings.
-        opts.buffer = event.buf
+        -- Telescope-backed navigation (richer pickers than the gr* defaults).
+        map('gd', tsb.lsp_definitions, '[G]oto [D]efinition')
+        map('gr', tsb.lsp_references, '[G]oto [R]eferences')
+        map('gI', tsb.lsp_implementations, '[G]oto [I]mplementation')
+        map('<leader>gt', tsb.lsp_type_definitions, '[G]oto [T]ype definition')
+        map('<leader>ds', tsb.lsp_document_symbols, '[D]ocument [S]ymbols')
+        map('<leader>ws', tsb.lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+        map('<leader>D', function()
+          tsb.diagnostics({ bufnr = 0 })
+        end, 'Buffer [D]iagnostics')
 
-        -- keybinds
-        --  To jump back, press <C-t>.
-        opts.desc = 'LSP: [G]oto [D]efinition'
-        map('gd', tsb.lsp_definitions, opts)
-
-        opts.desc = 'LSP: [G]oto [R]eferences'
-        map('gr', tsb.lsp_references, opts)
-
-        opts.desc = 'LSP: [G]oto [D]eclaration'
-        map('gD', vim.lsp.buf.declaration, opts)
-
-        opts.desc = 'LSP: [G]oto [I]mplementation'
-        map('gI', tsb.lsp_implementations, opts)
-
-        opts.desc = 'LSP: [G]oto [T]ype Definition'
-        map('<leader>gt', tsb.lsp_type_definitions, opts)
-
-        opts.desc = 'LSP: [D]ocument [S]ymbols'
-        map('<leader>ds', tsb.lsp_document_symbols, opts)
-
-        opts.desc = 'LSP: [W]orkspace [S]ymbols'
-        map('<leader>ws', tsb.lsp_dynamic_workspace_symbols, opts)
-
-        opts.desc = 'LSP: [R]e[n]ame'
-        map('<leader>rn', vim.lsp.buf.rename, opts)
-
-        opts.desc = 'LSP: [C]ode [A]ction'
-        map('<leader>ca', vim.lsp.buf.code_action, opts)
-
-        opts.desc = 'LSP: Hover Documentation'
-        map('K', vim.lsp.buf.hover, opts)
-
-        opts.desc = 'LSP: Signature Help'
-        map('<C-k>', vim.lsp.buf.signature_help, opts)
-
-        opts.desc = 'LSP: Show Buffer [D]iagnostics'
-        map('<leader>D', '<cmd>Telescope diagnostics bufnr=0<CR>', opts)
-
-        opts.desc = 'LSP: Line [d]iagnostics'
-        map('<leader>d', vim.diagnostic.open_float, opts)
-
-        opts.desc = 'LSP: Previous diagnostic'
-        map('[d', vim.diagnostic.goto_prev, opts)
-
-        opts.desc = 'LSP: Next diagnostic'
-        map(']d', vim.diagnostic.goto_next, opts)
-
-        opts.desc = 'LSP: [F]ormat buffer'
+        map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+        map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+        map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+        map('<leader>d', vim.diagnostic.open_float, 'Line [d]iagnostics')
+        map('<leader>rs', '<cmd>LspRestart<CR>', 'Restart LSP')
         map('<leader>f', function()
           vim.lsp.buf.format({ async = true })
-        end, opts)
+        end, '[F]ormat buffer')
 
-        opts.desc = 'LSP: Restart LSP'
-        map('<leader>rs', ':LspRestart<CR>', opts)
-
-        -- Autocommands to highlight references of the word under your cursor.
+        -- Highlight references of the symbol under the cursor.
         local client = vim.lsp.get_client_by_id(event.data.client_id)
-        if client and client.server_capabilities.documentHighlightProvider then
+        if client and client:supports_method('textDocument/documentHighlight') then
+          local hl_group = vim.api.nvim_create_augroup('user-lsp-highlight', { clear = false })
           vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
             buffer = event.buf,
+            group = hl_group,
             callback = vim.lsp.buf.document_highlight,
           })
-
           vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
             buffer = event.buf,
+            group = hl_group,
             callback = vim.lsp.buf.clear_references,
           })
         end
       end,
     })
 
-    -- Announce additional capabilities from plugins to the LSP servers.
+    -- [[ Capabilities ]] — broadcast blink.cmp's extra completion capabilities
+    -- to every server via the `*` wildcard config.
     local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities = vim.tbl_deep_extend('force', capabilities, cmp_nvim_lsp.default_capabilities())
-
-    -- Change the Diagnostic symbols in the sign column (gutter)
-    local signs = { Error = ' ', Warn = ' ', Hint = '󰠠 ', Info = ' ' }
-    for type, icon in pairs(signs) do
-      local hl = 'DiagnosticSign' .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = '' })
+    local ok_blink, blink = pcall(require, 'blink.cmp')
+    if ok_blink then
+      capabilities = blink.get_lsp_capabilities(capabilities)
     end
+    vim.lsp.config('*', { capabilities = capabilities })
 
-    -- configure ansible server
-    lspconfig.ansiblels.setup({
-      capabilities = capabilities,
+    -- [[ Per-server overrides ]]
+    vim.lsp.config('ansiblels', {
       filetypes = { 'yaml' },
-      root_dir = util.root_pattern('ansible.cfg'),
+      root_markers = { 'ansible.cfg' },
     })
 
-    -- configure html server
-    lspconfig.html.setup({
-      capabilities = capabilities,
-    })
-
-    -- configure typescript server with plugin
-    lspconfig.ts_ls.setup({
-      capabilities = capabilities,
-    })
-
-    -- configure css server
-    lspconfig.cssls.setup({
-      capabilities = capabilities,
-    })
-
-    -- configure emmet language server
-    lspconfig.emmet_ls.setup({
-      capabilities = capabilities,
+    vim.lsp.config('emmet_ls', {
       filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less', 'svelte' },
     })
 
-    -- configure markdown server
-    lspconfig.marksman.setup({
-      capabilities = capabilities,
+    vim.lsp.config('marksman', {
       filetypes = { 'markdown', 'markdown.mdx' },
-      root_dir = util.root_pattern('.git', '.marksman.toml'),
+      root_markers = { '.marksman.toml', '.git' },
     })
 
-    -- configure golang server
-    lspconfig.gopls.setup({
-      capabilities = capabilities,
-      cmd = { 'gopls' },
-      filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
-      root_dir = util.root_pattern('go.work', 'go.mod', '.git'),
+    vim.lsp.config('gopls', {
       settings = {
         gopls = {
           completeUnimported = true,
           usePlaceholders = true,
-          analyses = {
-            unusedparams = true,
-          },
+          analyses = { unusedparams = true },
         },
       },
     })
 
-    -- configure python server
-    lspconfig.pyright.setup({
-      capabilities = capabilities,
-    })
-
-    -- configure lua server (with special settings)
-    lspconfig.lua_ls.setup({
-      capabilities = capabilities,
-      settings = { -- custom settings for lua
+    vim.lsp.config('lua_ls', {
+      settings = {
         Lua = {
-          -- Recognize "vim" global
-          diagnostics = {
-            globals = { 'vim' },
-          },
-          completion = {
-            callSnippet = 'Replace',
-          },
-          -- workspace = {
-          --   -- make language server aware of runtime files
-          --   library = {
-          --     [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-          --     [vim.fn.stdpath('config') .. '/lua'] = true,
-          --   },
-          -- },
+          completion = { callSnippet = 'Replace' },
         },
       },
+    })
+
+    -- [[ Activate servers ]] (installed via mason; see mason.lua).
+    vim.lsp.enable({
+      'ansiblels',
+      'yamlls',
+      'bashls',
+      'clangd',
+      'dockerls',
+      'docker_compose_language_service',
+      'gopls',
+      'marksman',
+      'ts_ls',
+      'html',
+      'cssls',
+      'emmet_ls',
+      'lua_ls',
+      'pyright',
     })
   end,
 }
