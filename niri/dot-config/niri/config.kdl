@@ -234,6 +234,26 @@ window-rule {
     clip-to-geometry true
 }
 
+// Dim (make translucent) every window that isn't the active one on its
+// monitor. is-active is tracked per-output, unlike is-focused which only
+// ever matches a single window, so the window you're reading on the other
+// monitor stays fully opaque.
+window-rule {
+    match is-active=false
+    opacity 0.85
+    // With prefer-no-csd, windows are SSD and niri would otherwise paint the
+    // focus-ring/border color behind the window; disable that so translucency
+    // reveals the backdrop instead of the ring color.
+    draw-border-with-background false
+}
+
+// Slight translucency for the active alacritty window.
+window-rule {
+    match app-id=r#"^Alacritty$"# is-active=true
+    opacity 0.95
+    draw-border-with-background false
+}
+
 window-rule {
     // Matches the app-id and ensures the title starts with "setup"
     match app-id="google-chrome" title="^setup"
