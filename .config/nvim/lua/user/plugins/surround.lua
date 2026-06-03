@@ -1,8 +1,8 @@
 return {
-  "echasnovski/mini.surround",
+  'echasnovski/mini.surround',
   version = false,
   config = function()
-    local ms = require("mini.surround")
+    local ms = require('mini.surround')
     ms.setup({
       -- Module mappings. Use `''` (empty string) to disable one.
       mappings = {

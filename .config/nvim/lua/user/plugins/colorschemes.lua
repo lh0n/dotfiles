@@ -2,8 +2,7 @@ return {
   -- gruvbox (lua port from gruvbox-community)
   {
     'ellisonleao/gruvbox.nvim',
-    lazy = false, -- Default theme should load on startup.
-    priority = 1000,
+    lazy = true, -- alternate scheme; only catppuccin loads eagerly.
     config = function()
       require('gruvbox').setup({
         undercurl = true,
@@ -59,14 +58,10 @@ return {
           shade = 'dark',
           percentage = 0.15,
         },
+        -- Only enable integrations for plugins that are actually installed.
         integrations = {
           blink_cmp = true,
-          dap = true,
-          dap_ui = true,
           fidget = true,
-          gitsigns = true,
-          harpoon = true,
-          lsp_trouble = true,
           markdown = true,
           mason = true,
           mini = {
@@ -74,12 +69,10 @@ return {
             indentscope_color = '',
           },
           nvimtree = true,
-          snacks = true,
           telescope = {
             enabled = true,
           },
           treesitter = true,
-          which_key = true,
         },
       })
     end,

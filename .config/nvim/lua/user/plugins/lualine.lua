@@ -7,7 +7,7 @@ return {
     local lualine = require('lualine')
     lualine.setup({
       options = {
-        theme = 'catppuccin-macchiato',
+        theme = 'auto', -- follow the active colorscheme (catppuccin-mocha)
       },
       -- tabline = {
       --     lualine_a = {'windows'},

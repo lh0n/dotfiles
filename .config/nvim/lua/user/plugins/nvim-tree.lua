@@ -1,16 +1,16 @@
 return {
-  "nvim-tree/nvim-tree.lua",
+  'nvim-tree/nvim-tree.lua',
   lazy = false,
-  version = "*",
+  version = '*',
   dependencies = {
-    "nvim-tree/nvim-web-devicons",
+    'nvim-tree/nvim-web-devicons',
   },
   config = function()
-    local nt = require("nvim-tree")
+    local nt = require('nvim-tree')
     local k = vim.keymap
 
     nt.setup({})
 
-    k.set("n", "<leader>e", vim.cmd.NvimTreeToggle, { desc = "Toggle File Explorer." })
+    k.set('n', '<leader>e', vim.cmd.NvimTreeToggle, { desc = 'Toggle File Explorer.' })
   end,
 }

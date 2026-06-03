@@ -56,8 +56,10 @@ return {
         map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
         map('<leader>d', vim.diagnostic.open_float, 'Line [d]iagnostics')
         map('<leader>rs', '<cmd>LspRestart<CR>', 'Restart LSP')
+        -- Formatting goes through conform (single path, LSP as fallback);
+        -- see formatting.lua. <leader>cf does the same for a visual range.
         map('<leader>f', function()
-          vim.lsp.buf.format({ async = true })
+          require('conform').format({ lsp_format = 'fallback', async = true })
         end, '[F]ormat buffer')
 
         -- Highlight references of the symbol under the cursor.

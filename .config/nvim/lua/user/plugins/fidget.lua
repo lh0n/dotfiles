@@ -1,5 +1,5 @@
 return {
-  "j-hui/fidget.nvim",
+  'j-hui/fidget.nvim',
   -- tag = "v1.3.0",
   opts = {
     -- options
