@@ -1,8 +1,9 @@
--- LSP, migrated to the native Neovim 0.11+ API:
---   * `vim.lsp.config(name, opts)` for per-server overrides
---   * `vim.lsp.enable({...})` to activate servers
--- The base cmd/filetypes/root for each server still come from nvim-lspconfig's
--- shipped `lsp/<name>.lua` files; we only override what we customize.
+-- LSP, on the native Neovim 0.11+ API:
+--   * Per-server overrides live in `~/.config/nvim/lsp/<name>.lua` (auto-loaded
+--     from runtimepath and merged with nvim-lspconfig's shipped base configs).
+--   * `vim.lsp.enable({...})` below activates them.
+-- This file only handles diagnostics UI, on-attach keymaps, the `*` capabilities
+-- broadcast, and the enable list.
 --
 -- Lua/nvim-API awareness is provided by lazydev.nvim (see lazydev.lua), which
 -- replaces the archived neodev.nvim.
@@ -25,6 +26,10 @@ return {
       },
       virtual_text = { source = 'if_many', spacing = 2 },
     })
+
+    -- Document-highlight autocmds live in this group; created once so
+    -- LspDetach can clear just the detaching buffer's entries.
+    local highlight_augroup = vim.api.nvim_create_augroup('user-lsp-highlight', { clear = true })
 
     -- [[ Buffer-local keymaps on attach ]]
     -- Neovim 0.11 ships defaults we no longer remap: K (hover), <C-s> (insert
@@ -65,18 +70,27 @@ return {
         -- Highlight references of the symbol under the cursor.
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if client and client:supports_method('textDocument/documentHighlight') then
-          local hl_group = vim.api.nvim_create_augroup('user-lsp-highlight', { clear = false })
           vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
             buffer = event.buf,
-            group = hl_group,
+            group = highlight_augroup,
             callback = vim.lsp.buf.document_highlight,
           })
           vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
             buffer = event.buf,
-            group = hl_group,
+            group = highlight_augroup,
             callback = vim.lsp.buf.clear_references,
           })
         end
+      end,
+    })
+
+    -- Tear down the per-buffer highlight autocmds when a server detaches, so
+    -- they don't stack across re-attaches or multiple clients.
+    vim.api.nvim_create_autocmd('LspDetach', {
+      group = vim.api.nvim_create_augroup('user-lsp-detach', { clear = true }),
+      callback = function(event)
+        vim.lsp.buf.clear_references()
+        vim.api.nvim_clear_autocmds({ group = highlight_augroup, buffer = event.buf })
       end,
     })
 
@@ -89,40 +103,8 @@ return {
     end
     vim.lsp.config('*', { capabilities = capabilities })
 
-    -- [[ Per-server overrides ]]
-    vim.lsp.config('ansiblels', {
-      filetypes = { 'yaml' },
-      root_markers = { 'ansible.cfg' },
-    })
-
-    vim.lsp.config('emmet_ls', {
-      filetypes = { 'html', 'typescriptreact', 'javascriptreact', 'css', 'sass', 'scss', 'less', 'svelte' },
-    })
-
-    vim.lsp.config('marksman', {
-      filetypes = { 'markdown', 'markdown.mdx' },
-      root_markers = { '.marksman.toml', '.git' },
-    })
-
-    vim.lsp.config('gopls', {
-      settings = {
-        gopls = {
-          completeUnimported = true,
-          usePlaceholders = true,
-          analyses = { unusedparams = true },
-        },
-      },
-    })
-
-    vim.lsp.config('lua_ls', {
-      settings = {
-        Lua = {
-          completion = { callSnippet = 'Replace' },
-        },
-      },
-    })
-
     -- [[ Activate servers ]] (installed via mason; see mason.lua).
+    -- Per-server overrides, if any, live in ~/.config/nvim/lsp/<name>.lua.
     vim.lsp.enable({
       'ansiblels',
       'yamlls',

@@ -1,4 +1,4 @@
-local opt = vim.opt -- for consiseness
+local opt = vim.opt -- for conciseness
 
 vim.g.mapleader = ' ' -- set leader before plugins so mappings are correct.
 vim.g.maplocalleader = ' ' -- same as leader.
@@ -12,7 +12,6 @@ opt.backup = false -- don't create a backup file
 opt.clipboard = 'unnamed' -- sync the unnamed register with the system PRIMARY selection (the `*` register), so yanks/deletes are shared with X11 middle-click; the system clipboard (`+`/Ctrl-V) stays separate, reached via the <leader>y maps.
 opt.cmdheight = 2 -- more space in the neovim command line for displaying messages'
 opt.colorcolumn = '80' -- highlight column 80
-opt.completeopt = { 'menu', 'menuone', 'noselect' } -- supported modes for completion while in insert mode.
 opt.conceallevel = 0 -- do not conceal any text.
 opt.cursorcolumn = true -- highlight the current column
 opt.cursorline = true -- highlight the current line
@@ -33,7 +32,6 @@ opt.number = true -- set numbered lines
 opt.numberwidth = 4 -- set the number column width.
 opt.pumheight = 10 -- pop up menu height
 opt.relativenumber = true -- set relative numbered lines
-opt.ruler = true -- shows line/column number of the cursor position.
 opt.scrolloff = 10 -- minimal number of screen lines to keep above and below the cursor
 opt.shiftwidth = 2 -- the number of spaces inserted for each indentation
 opt.showmode = false -- we don't need to see things like -- INSERT -- anymore
@@ -52,27 +50,14 @@ opt.timeoutlen = 500 -- timeout for a mapped sequence to complete (in millisecon
 opt.undofile = true -- enable persistent undo
 opt.updatetime = 300 -- faster completion (4000ms default)
 opt.whichwrap = '<>[]' -- which 'horizontal' keys are allowed to travel to prev/next line
-opt.wildmenu = true -- enhanced menu completion.
-opt.wildmode = 'full' -- completes the next full match.
 opt.wrap = true -- display lines as one long line
 opt.writebackup = false -- don't make a backup before overwriting a file.
 
--- opt.shortmess = 'ilmnrx'             -- flags to shorten vim messages, see :help 'shortmess'
 opt.shortmess:append('c') -- don't give |ins-completion-menu| messages
 opt.iskeyword:append('-') -- hyphenated words recognized by searches
 
--- :help fo-table
--- This is overridden by the default ftplugin definitions.
--- Can be overridden per-filetype using after/ftplugin/...
-opt.formatoptions = vim.opt.formatoptions
-  - 'a' -- Auto formatting is BAD.
-  - 't' -- Don't auto format my code. I got linters for that.
-  + 'c' -- In general, I like it when comments respect textwidth
-  + 'q' -- Allow formatting comments w/ gq
-  - 'o' -- O and o, don't continue comments
-  + 'r' -- But do continue when pressing enter.
-  + 'n' -- Indent past the formatlistpat, not underneath it.
-  + 'j' -- Auto-remove comments if possible.
-  - '2' -- I'm not in gradeschool anymore
+-- NOTE: 'formatoptions' is applied per-buffer in a FileType autocmd (see
+-- autocmd.lua), because filetype plugins reset it and would override a global
+-- value set here.
 
 opt.runtimepath:remove('/usr/share/vim/vimfiles') -- separate vim plugins from neovim in case vim still in use
