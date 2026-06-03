@@ -41,6 +41,7 @@
           - stow
           - swaybg
           - tmux
+          - unzip
           - vim
           - waybar
           - wl-clipboard
@@ -49,27 +50,6 @@
         - packages
         - system
         - apt
-
-    - name: Neovim Build Deps
-      ansible.builtin.apt:
-        autoclean: true
-        autoremove: true
-        clean: true
-        update_cache: true
-        cache_valid_time: 3600
-        state: present
-        pkg:
-          - ninja-build
-          - gettext
-          - cmake
-          - unzip
-          - curl
-          - build-essential
-      tags:
-        - packages
-        - system
-        - apt
-        - neovim
 
     - name: Uninstall APT Packages
       ansible.builtin.apt:

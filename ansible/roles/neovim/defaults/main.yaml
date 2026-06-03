@@ -3,3 +3,13 @@ neovim_repo_url: "https://github.com/neovim/neovim.git"
 neovim_version: "stable"
 neovim_src_dir: "{{ ansible_facts['env']['HOME'] }}/github.com/neovim"
 neovim_install_prefix: "{{ ansible_facts['env']['HOME'] }}/.local/neovim"
+
+# System packages required to build Neovim from source on Debian/Ubuntu.
+# Verified against the upstream BUILD.md and .github/scripts/install_deps.sh.
+neovim_build_packages:
+  - build-essential
+  - cmake
+  - curl
+  - gettext
+  - git
+  - ninja-build
