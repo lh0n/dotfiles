@@ -1,7 +1,8 @@
 -- blink.cmp — completion engine replacing nvim-cmp and its cmp-* sources.
--- LuaSnip remains the snippet engine (configured in luasnip.lua); friendly
--- snippets are loaded there too. lspkind is no longer needed (blink draws its
--- own kind icons).
+-- Snippets use blink's `default` preset: friendly-snippets (VSCode-format) are
+-- scanned from runtimepath and expanded via Neovim's built-in `vim.snippet`,
+-- so no separate snippet engine (LuaSnip) is needed. lspkind is no longer
+-- needed either (blink draws its own kind icons).
 --
 -- Using a release tag (`version`) pulls a prebuilt fuzzy-matcher binary, so no
 -- Rust toolchain / `cargo build` is required.
@@ -10,12 +11,12 @@ return {
   event = 'InsertEnter',
   version = '1.*',
   dependencies = {
-    'L3MON4D3/LuaSnip', -- snippet engine (full spec lives in luasnip.lua)
+    'rafamadriz/friendly-snippets', -- VSCode-format snippets, loaded by the `default` preset
   },
   ---@module 'blink.cmp'
   ---@type blink.cmp.Config
   opts = {
-    snippets = { preset = 'luasnip' },
+    snippets = { preset = 'default' },
 
     -- Keymap kept close to the previous nvim-cmp bindings.
     keymap = {
@@ -27,7 +28,7 @@ return {
       ['<C-c>'] = { 'cancel', 'fallback' },
       ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
       ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
-      -- Snippet jumps (previously <C-l>/<C-h> via LuaSnip).
+      -- Snippet tabstop jumps (routed to vim.snippet.jump).
       ['<C-l>'] = { 'snippet_forward', 'fallback' },
       ['<C-h>'] = { 'snippet_backward', 'fallback' },
     },
