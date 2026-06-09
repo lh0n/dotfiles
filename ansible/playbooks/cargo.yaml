@@ -23,6 +23,7 @@
         name:
           - bat # better cat
           - bkt # subprocess caching utility
+          - cargo-seek # search crates
           - cargo-show # print package metadata
           - du-dust # better du
           - eza # better ls
@@ -31,6 +32,7 @@
           - ripgrep # better grep
           - starship # shell prompt
           - tealdeer # tldr client
+          - uv # better pipx
       tags:
         - packages
         - user
